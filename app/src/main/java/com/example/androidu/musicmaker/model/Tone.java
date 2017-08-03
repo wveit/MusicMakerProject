@@ -1,14 +1,21 @@
 package com.example.androidu.musicmaker.model;
 
 public class Tone {
-    public Tone(Note note, Instrument instrument, int measure, int beat, int lengthInBeats) {
-    }
 
     private Note mNote;
     private Instrument mInstrument;
     private int mMeasure;
     private int mBeat;
     private int mLengthInBeats;
+
+
+    public Tone(Note note, Instrument instrument, int measure, int beat, int lengthInBeats){
+        mNote = note;
+        mInstrument = instrument;
+        mMeasure = measure;
+        mBeat = beat;
+        mLengthInBeats = lengthInBeats;
+    }
 
     public Note getNote() {
         return mNote;
@@ -30,5 +37,4 @@ public class Tone {
         return mLengthInBeats;
     }
 
-    // Note: I think this class should be immutable
 }
