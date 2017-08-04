@@ -56,6 +56,11 @@
         android:layout_margin="7dp"
         android:background="#B63F3F"
          />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello"
+        android:background="@drawable/border_style"/>
 
 
 </LinearLayout>
