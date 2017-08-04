@@ -1,5 +1,17 @@
 package com.example.androidu.musicmaker.model;
 
+import com.example.androidu.musicmaker.audio.instrument.*;
+
 public enum Instrument {
-    TELEPHONE, PIANO;
+    TELEPHONE(new TelephoneFunction()), PIANO(new SquareFunction()), TRUMPET(new TrumpetFunction());
+
+    private InstrumentFunction mFunction;
+
+    Instrument(InstrumentFunction function){
+        mFunction = function;
+    }
+
+    public InstrumentFunction getFunction(){
+        return mFunction;
+    }
 }
