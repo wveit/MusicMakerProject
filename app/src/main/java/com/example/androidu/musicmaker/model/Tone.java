@@ -1,13 +1,40 @@
 package com.example.androidu.musicmaker.model;
 
 public class Tone {
-    public Tone(Note note, Instrument instrument, int measure, int beat, int lengthInBeats){}
 
-    public Note getNote(){ return null; }
-    public Instrument getInstrument(){ return null; }
-    public int getStartMeasure(){ return 0; }
-    public int getStartBeat(){ return 0; }
-    public int getLengthInBeats(){ return 0; }
+    private Note mNote;
+    private Instrument mInstrument;
+    private int mMeasure;
+    private int mBeat;
+    private int mLengthInBeats;
 
-    // Note: I think this class should be immutable
+
+    public Tone(Note note, Instrument instrument, int measure, int beat, int lengthInBeats){
+        mNote = note;
+        mInstrument = instrument;
+        mMeasure = measure;
+        mBeat = beat;
+        mLengthInBeats = lengthInBeats;
+    }
+
+    public Note getNote() {
+        return mNote;
+    }
+
+    public Instrument getInstrument() {
+        return mInstrument;
+    }
+
+    public int getStartMeasure() {
+        return mMeasure;
+    }
+
+    public int getStartBeat() {
+        return mBeat;
+    }
+
+    public int getLengthInBeats() {
+        return mLengthInBeats;
+    }
+
 }
