@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MusicMaker</string>
+    <array name="instruments">
+        <item>Piano</item>
+        <item>Guitar</item>
+        <item>Recorder</item>
+    </array>
 </resources>
