@@ -6,6 +6,7 @@ public class Loop {
     private int mNumMeasures;
     private int mBeatsPerMeasure;
     private int mTempo;
+    private String name;
     private ArrayList<Tone> mToneList;
 
     public Loop(int numMeasures, int beatsPerMeasure) {
@@ -21,6 +22,10 @@ public class Loop {
             mBeatsPerMeasure = 4;
         }
     }
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
 
     public int getNumMeasures() {
         return mNumMeasures;
@@ -47,7 +52,7 @@ public class Loop {
             int markerEnd = markerStart + beatLength; //Ending CheckPoint
             int beatMarker = ((4 * measure) + beat);
 
-            if(beatMarker >= markerStart && beatMarker <= markerEnd) {
+            if (beatMarker >= markerStart && beatMarker <= markerEnd) {
                 return i;
             }
         }
