@@ -1,16 +1,33 @@
 package com.example.androidu.musicmaker.filesystem;
 
+import com.example.androidu.musicmaker.audio.test.TestSongs;
 import com.example.androidu.musicmaker.model.Song;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import android.util.Log;
 
 
 public class SaverLoader {
 
-    ObjectMapper mapper = new ObjectMapper();
-    
+    public static final String tag = "tag";
 
-    public static boolean save(Song song, String filename){ return true; }
-    public static boolean load(Song song, String filename){ return true; }
+    public static boolean save(Song song, String filename) {
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json = "";
+        try {
+            json = mapper.writeValueAsString(song);
+            Log.d(tag, json);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+    public static boolean load(Song song, String filename) {
+        return true;
+    }
 }
 
 
