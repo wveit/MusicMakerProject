@@ -21,6 +21,8 @@ public class Loop {
         } else {
             mBeatsPerMeasure = 4;
         }
+
+        mToneList = new ArrayList<Tone>();
     }
 
     public String getName() { return name; }
