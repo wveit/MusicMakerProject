@@ -1,9 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.androidu.musicmaker.ui.MainMenuActivity">
+    tools:context="com.example.androidu.musicmaker.ui.MainMenuActivity"
+    android:orientation="vertical"
+    android:background="@drawable/music_icon"
+    android:backgroundTintMode="screen">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Let's Make Some Music.!!"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:paddingBottom="30dp"
+        android:paddingTop="10dp"
+        android:layout_margin="7dp"
+        android:textColor="#0D1E89"/>
+
+    <Button
+        android:id="@+id/create_new_song"
+        android:layout_width="180dp"
+        android:layout_height="80dp"
+        android:padding="15dp"
+        android:text="Create Music"
+        android:textStyle="normal"
+        android:layout_gravity="center"
+        android:layout_margin="7dp"
+        android:background="#B63F3F"
+        />
+
+    <Button
+        android:id="@+id/load_song"
+        android:layout_width="180dp"
+        android:layout_height="80dp"
+        android:text="Load Music"
+        android:padding="15dp"
+        android:textStyle="normal"
+        android:layout_gravity="center"
+        android:layout_margin="7dp"
+        android:background="#B63F3F"
+        />
+
+    <Button
+        android:id="@+id/exit"
+        android:layout_width="180dp"
+        android:layout_height="80dp"
+        android:text="Exit"
+        android:padding="15dp"
+        android:textStyle="normal"
+        android:layout_gravity="center"
+        android:layout_margin="7dp"
+        android:background="#B63F3F"
+         />
+
+
+</LinearLayout>
