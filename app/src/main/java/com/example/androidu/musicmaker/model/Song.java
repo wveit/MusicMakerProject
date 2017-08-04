@@ -6,8 +6,8 @@ import java.util.ArrayList;
 public class Song {
     private int mNumMeasures;
     private int mBeatsPerMeasure;
-    private ArrayList<Loop> mLoopList;
-    private ArrayList<PlacedLoop> mPlacedLoopList;
+    private ArrayList<Loop> mLoopList = new ArrayList<Loop>();
+    private ArrayList<PlacedLoop> mPlacedLoopList = new ArrayList<PlacedLoop>();
 
 
     public Song(int numMeasures, int beatsPerMeasure){
