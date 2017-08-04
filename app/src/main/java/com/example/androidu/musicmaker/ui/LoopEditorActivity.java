@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.androidu.musicmaker.R;
+import com.example.androidu.musicmaker.model.BeatAndMeasure;
 import com.example.androidu.musicmaker.model.Instrument;
 import com.example.androidu.musicmaker.model.Loop;
 import com.example.androidu.musicmaker.model.Note;
@@ -32,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoopEditorActivity extends Activity {
+
+
 
     // These methods are called in response to a user action
     void onTonePlacement(Tone newTone){}
@@ -45,7 +48,6 @@ public class LoopEditorActivity extends Activity {
 
     // These methods are used to control the activity
     void setLoop(Loop loop){}
-
     private TextView mTvLoopName, mTvNoOfLoopsMeasure, mTvBeatsPerMeasure, mTvRytherZoomLevel;
     private Spinner mSpInstruments;
     private ImageView mImPlayPause;
@@ -57,7 +59,7 @@ public class LoopEditorActivity extends Activity {
     int mMeasureCount = 1;
     int mBeatCount = 2;
 
-    List<Integer> numberOfMeasuresList = new ArrayList<>();
+    List<BeatAndMeasure> numberOfMeasuresList = new ArrayList<>();
 
     TextView tv;
 
@@ -215,11 +217,11 @@ public class LoopEditorActivity extends Activity {
 
         for(int i = 1; i <= (mNumberOfMeasures * mNumberOfBeats); i++){
             if(i % mNumberOfBeats == 1){
-                numberOfMeasuresList.add(mMeasureCount);
+                numberOfMeasuresList.add(new BeatAndMeasure(mBeatCount, mMeasureCount));
                 mMeasureCount++;
                 mBeatCount = 2;
             } else{
-                numberOfMeasuresList.add(mBeatCount);
+                numberOfMeasuresList.add(new BeatAndMeasure(mBeatCount, mMeasureCount));
                 mBeatCount++;
             }
 
@@ -279,6 +281,11 @@ public class LoopEditorActivity extends Activity {
             }
         } else {
             view.setBackgroundColor(getColor(R.color.buttonColor));
+        }
+
+        for(Note note : Note.values()){
+            note.toString();
+            note.ordinal();
         }
         Toast.makeText(getApplicationContext(), view.getContentDescription(), Toast.LENGTH_LONG).show();
     }
