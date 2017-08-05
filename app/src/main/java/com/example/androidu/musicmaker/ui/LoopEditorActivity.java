@@ -48,6 +48,7 @@ public class LoopEditorActivity extends Activity {
 
     // These methods are used to control the activity
     void setLoop(Loop loop){}
+
     private TextView mTvLoopName, mTvNoOfLoopsMeasure, mTvBeatsPerMeasure, mTvRytherZoomLevel;
     private Spinner mSpInstruments;
     private ImageView mImPlayPause;
