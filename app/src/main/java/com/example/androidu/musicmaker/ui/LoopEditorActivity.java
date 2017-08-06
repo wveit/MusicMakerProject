@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -57,8 +58,11 @@ public class LoopEditorActivity extends Activity {
     LinearLayout mLnNotes;
     GridLayout gd;
     private static int mNumberOfMeasures = 5, mNumberOfBeats = 4, mZoomLevel = 1;
+    int noteIndex = -1, beatAndMeasureIndex = 1;
 
     List<BeatAndMeasure> numberOfMeasuresList;
+    List<Tone> tonePlacedByUser = new ArrayList<>();
+    int idForTone = 100;
 
     TextView tv;
 
@@ -176,11 +180,11 @@ public class LoopEditorActivity extends Activity {
         mSpInstruments.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(mSpInstruments.getSelectedItem().toString().equals("Guitar")){
+                if(mSpInstruments.getSelectedItem().toString().equals(getString(R.string.telephone))){
                     mTvInstrumentLegend.setBackgroundColor(Color.RED);
-                } else if(mSpInstruments.getSelectedItem().toString().equals("Piano")){
+                } else if(mSpInstruments.getSelectedItem().toString().equals(getString(R.string.piano))){
                     mTvInstrumentLegend.setBackgroundColor(Color.BLUE);
-                } else if(mSpInstruments.getSelectedItem().toString().equals("Recorder")){
+                } else if(mSpInstruments.getSelectedItem().toString().equals(getString(R.string.trumpet))){
                     mTvInstrumentLegend.setBackgroundColor(Color.BLACK);
                 }
             }
@@ -219,7 +223,7 @@ public class LoopEditorActivity extends Activity {
 
         numberOfMeasuresList = new ArrayList<>();
 
-        String[] chord = {"C", "B", "Bb", "A", "Ab", "G", "F#", "F", "E", "Eb", "D", "C#", "C"};
+        String[] notes = {"C", "B", "Bb", "A", "Ab", "G", "F#", "F", "E", "Eb", "D", "C#", "C"};
 
         for(int i = 1; i <= (mNumberOfMeasures * mNumberOfBeats + 1); i++){
             if(i % mNumberOfBeats == 1){
@@ -231,43 +235,50 @@ public class LoopEditorActivity extends Activity {
                 mBeatCount++;
             }
         }
-
         for(int g = 0; g < 1; g++) {
             gd = new GridLayout(this);
             gd.setColumnCount((mNumberOfMeasures * mNumberOfBeats) + 1);
-            gd.setRowCount(chord.length + 1);
+            gd.setRowCount(notes.length + 1);
             mLnNotes.addView(gd);
             int rowHeadCount = 0;
-            for (int i = 0; i < ((mNumberOfMeasures * mNumberOfBeats + 1) * (chord.length + 1)); i++) {
+            for (int i = 0; i < ((mNumberOfMeasures * mNumberOfBeats + 1) * (notes.length + 1)); i++) {
                 int check = mNumberOfMeasures * mNumberOfBeats + 1;
                 tv = new TextView(this);
-                tv.setGravity(50);
+                tv.setGravity(Gravity.CENTER);
                 tv.setContentDescription("id: " + i);
                 tv.setHeight(100);
                 tv.setWidth(100);
                 tv.setId(i);
-                if (tv.getId() <= (mNumberOfMeasures * mNumberOfBeats) && tv.getId() != 0) {
-                    tv.setBackgroundResource(R.drawable.measure_border);
+
+                if(tv.getId() == 0){
+                    //no action to be taken
+                } else if (tv.getId() <= (mNumberOfMeasures * mNumberOfBeats) && tv.getId() != 0) {
                     if(printMeasureNumber){
                         tv.setText(String.valueOf(numberOfMeasuresList.get(i-1).getMeausre()));
+                        tv.setBackgroundResource(R.drawable.measure_border);
                         tv.setTextColor(Color.RED);
                         printMeasureNumber = false;
                         nextMeasurePrint = 0;
                     } else {
                         tv.setText(String.valueOf(numberOfMeasuresList.get(i).getBeat()));
+                        tv.setBackgroundResource(R.drawable.beat_border);
                         nextMeasurePrint++;
-                        Log.d("TAG", "index" + numberOfMeasuresList.size());
                         if(nextMeasurePrint == (mNumberOfBeats - 1)){
                             printMeasureNumber = true;
                         }
                     }
                 } else if (tv.getId() > (mNumberOfMeasures * mNumberOfBeats) && tv.getId() % check == 0) {
                     check = check + mNumberOfMeasures * mNumberOfBeats;
-                    tv.setText(chord[rowHeadCount]);
+                    tv.setText(notes[rowHeadCount]);
                     rowHeadCount++;
                     tv.setBackgroundResource(R.drawable.note_border);
-                    Log.d("TAG", "count: " + rowHeadCount);
-                } else if(tv.getId() != 0){
+                    noteIndex++;
+                    beatAndMeasureIndex = 1;
+                } else {
+                    tv.setContentDescription(notes[noteIndex] + "-" + (numberOfMeasuresList.get(beatAndMeasureIndex).getMeausre() -1)
+                            + "-" + numberOfMeasuresList.get(beatAndMeasureIndex).getBeat() + "-" + "1");
+                    beatAndMeasureIndex++;
+
                     tv.setBackgroundColor(getResources().getColor(R.color.buttonColor));
                     tv.setOnTouchListener(new View.OnTouchListener() {
                         @Override
@@ -287,25 +298,34 @@ public class LoopEditorActivity extends Activity {
     }
 
     public void tvClick(View view){
+        String instrument = null;
+
         ColorDrawable col = (ColorDrawable) view.getBackground();
         int colorCode = col.getColor();
         if(colorCode == getColor(R.color.buttonColor)){
-            if(mSpInstruments.getSelectedItem().toString().equals(getString(R.string.guitar))){
+            if(mSpInstruments.getSelectedItem().toString().equals(getString(R.string.telephone))){
                 view.setBackgroundColor(Color.RED);
+                instrument = getString(R.string.telephone);
             } else if(mSpInstruments.getSelectedItem().toString().equals(getString(R.string.piano))){
                 view.setBackgroundColor(Color.BLUE);
-            } else if (mSpInstruments.getSelectedItem().toString().equals(getString(R.string.recorder))){
+                instrument = getString(R.string.telephone);
+            } else if (mSpInstruments.getSelectedItem().toString().equals(getString(R.string.trumpet))){
                 view.setBackgroundColor(Color.BLACK);
+                instrument = getString(R.string.telephone);
             }
         } else {
             view.setBackgroundColor(getColor(R.color.buttonColor));
         }
 
-        for(Note note : Note.values()){
-            note.toString();
-            note.ordinal();
+        String viewDescription = view.getContentDescription().toString();
+        String[] splitViewDescription = viewDescription.split("-");
+        if (tonePlacedByUser.contains(viewDescription)) {
+            tonePlacedByUser.remove(viewDescription);
+        } else{
+            //tonePlacedByUser.add(new Tone(splitViewDescription[0], instrument, Integer.parseInt(splitViewDescription[1]), Integer.parseInt(splitViewDescription[2]), 1));
         }
-        Toast.makeText(getApplicationContext(), view.getContentDescription(), Toast.LENGTH_LONG).show();
+
+        Log.d("TAG", "note:" + viewDescription);
     }
 }
 

@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">MusicMaker</string>
     <array name="instruments">
+        <item>Telephone</item>
         <item>Piano</item>
-        <item>Guitar</item>
-        <item>Recorder</item>
+        <item>Trumpet</item>
     </array>
-    <string name="guitar">Guitar</string>
+    <string name="telephone">Telephone</string>
     <string name="piano">Piano</string>
-    <string name="recorder">Recorder</string>
+    <string name="trumpet">Trumpet</string>
 </resources>
