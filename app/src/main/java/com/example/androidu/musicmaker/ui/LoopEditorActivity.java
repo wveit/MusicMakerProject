@@ -56,11 +56,9 @@ public class LoopEditorActivity extends Activity {
     private boolean play = true;
     LinearLayout mLnNotes;
     GridLayout gd;
-    private static int mNumberOfMeasures = 10, mNumberOfBeats = 4, mZoomLevel = 1;
-    int mMeasureCount = 1;
-    int mBeatCount = 2;
+    private static int mNumberOfMeasures = 5, mNumberOfBeats = 4, mZoomLevel = 1;
 
-    List<BeatAndMeasure> numberOfMeasuresList = new ArrayList<>();
+    List<BeatAndMeasure> numberOfMeasuresList;
 
     TextView tv;
 
@@ -131,8 +129,7 @@ public class LoopEditorActivity extends Activity {
                         String loopNumbers = edNumLoop.getText().toString();
                         mNumberOfMeasures = Integer.parseInt(loopNumbers);
                         mTvNoOfLoopsMeasure.setText("Number of loop \n Measures: \n" + loopNumbers);
-                        numberOfMeasuresList.clear();
-                        onUserInput();
+                        onCreate(null);
                     }
                 });
 
@@ -163,6 +160,7 @@ public class LoopEditorActivity extends Activity {
                         String beatPerMeasure = edNumLoop.getText().toString();
                         mNumberOfBeats = Integer.parseInt(beatPerMeasure);
                         mTvBeatsPerMeasure.setText("Number of loop \n Measures: \n" + beatPerMeasure);
+                        onCreate(null);
                     }
                 });
 
@@ -197,59 +195,80 @@ public class LoopEditorActivity extends Activity {
 
 
 
-//    public void togglePlayPause(View view){
-//        final ImageView playPause = (ImageView) findViewById(R.id.im_playPause);
-//        playPause.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                if (play) {
-//                    playPause.setImageResource(R.drawable.ic_pause_circle_outline_black_24px);
-//                    play = false;
-//                } else {
-//                    playPause.setImageResource(R.drawable.ic_play_arrow_black_24px);
-//                    play = true;
-//                }
-//            }
-//        });
-//    }
+    public void togglePlayPause(View view){
+        final ImageView playPause = (ImageView) findViewById(R.id.im_playPause);
+        playPause.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (play) {
+                    playPause.setImageResource(R.drawable.ic_pause_circle_filled_black_24px);
+                    play = false;
+                } else {
+                    playPause.setImageResource(R.drawable.ic_play_circle_filled_black_24px);
+                    play = true;
+                }
+            }
+        });
+    }
 
     public void onUserInput() {
 
+        int mMeasureCount = 1;
+        int mBeatCount = 1;
+        int nextMeasurePrint = 0;
+        boolean printMeasureNumber = true;
+
+        numberOfMeasuresList = new ArrayList<>();
+
         String[] chord = {"C", "B", "Bb", "A", "Ab", "G", "F#", "F", "E", "Eb", "D", "C#", "C"};
 
-        for(int i = 1; i <= (mNumberOfMeasures * mNumberOfBeats); i++){
+        for(int i = 1; i <= (mNumberOfMeasures * mNumberOfBeats + 1); i++){
             if(i % mNumberOfBeats == 1){
                 numberOfMeasuresList.add(new BeatAndMeasure(mBeatCount, mMeasureCount));
                 mMeasureCount++;
-                mBeatCount = 2;
+                mBeatCount = 1;
             } else{
                 numberOfMeasuresList.add(new BeatAndMeasure(mBeatCount, mMeasureCount));
                 mBeatCount++;
             }
-
         }
 
         for(int g = 0; g < 1; g++) {
             gd = new GridLayout(this);
-            gd.setColumnCount((mNumberOfMeasures * mNumberOfBeats));
-            gd.setRowCount(chord.length);
+            gd.setColumnCount((mNumberOfMeasures * mNumberOfBeats) + 1);
+            gd.setRowCount(chord.length + 1);
             mLnNotes.addView(gd);
             int rowHeadCount = 0;
-            for (int i = 0; i < (mNumberOfMeasures * mNumberOfBeats * chord.length); i++) {
-                int check = mNumberOfMeasures * mNumberOfBeats;
+            for (int i = 0; i < ((mNumberOfMeasures * mNumberOfBeats + 1) * (chord.length + 1)); i++) {
+                int check = mNumberOfMeasures * mNumberOfBeats + 1;
                 tv = new TextView(this);
+                tv.setGravity(50);
                 tv.setContentDescription("id: " + i);
                 tv.setHeight(100);
                 tv.setWidth(100);
                 tv.setId(i);
-                tv.setBackgroundColor(getResources().getColor(R.color.buttonColor));
-                if (tv.getId() < (mNumberOfMeasures * mNumberOfBeats) && tv.getId() != 0) {
-                    tv.setText(String.valueOf(numberOfMeasuresList.get(i-1)));
-                } else if (tv.getId() >= (mNumberOfMeasures * mNumberOfBeats) && tv.getId() % check == 0) {
+                if (tv.getId() <= (mNumberOfMeasures * mNumberOfBeats) && tv.getId() != 0) {
+                    tv.setBackgroundResource(R.drawable.measure_border);
+                    if(printMeasureNumber){
+                        tv.setText(String.valueOf(numberOfMeasuresList.get(i-1).getMeausre()));
+                        tv.setTextColor(Color.RED);
+                        printMeasureNumber = false;
+                        nextMeasurePrint = 0;
+                    } else {
+                        tv.setText(String.valueOf(numberOfMeasuresList.get(i).getBeat()));
+                        nextMeasurePrint++;
+                        Log.d("TAG", "index" + numberOfMeasuresList.size());
+                        if(nextMeasurePrint == (mNumberOfBeats - 1)){
+                            printMeasureNumber = true;
+                        }
+                    }
+                } else if (tv.getId() > (mNumberOfMeasures * mNumberOfBeats) && tv.getId() % check == 0) {
                     check = check + mNumberOfMeasures * mNumberOfBeats;
                     tv.setText(chord[rowHeadCount]);
                     rowHeadCount++;
+                    tv.setBackgroundResource(R.drawable.note_border);
                     Log.d("TAG", "count: " + rowHeadCount);
                 } else if(tv.getId() != 0){
+                    tv.setBackgroundColor(getResources().getColor(R.color.buttonColor));
                     tv.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
@@ -261,23 +280,21 @@ public class LoopEditorActivity extends Activity {
                         }
                     });
                 }
+                gd.setUseDefaultMargins(true);
                 gd.addView(tv);
             }
         }
-        onStart();
     }
-
-
 
     public void tvClick(View view){
         ColorDrawable col = (ColorDrawable) view.getBackground();
         int colorCode = col.getColor();
         if(colorCode == getColor(R.color.buttonColor)){
-            if(mSpInstruments.getSelectedItem().toString().equals("Guitar")){
+            if(mSpInstruments.getSelectedItem().toString().equals(getString(R.string.guitar))){
                 view.setBackgroundColor(Color.RED);
-            } else if(mSpInstruments.getSelectedItem().toString().equals("Piano")){
+            } else if(mSpInstruments.getSelectedItem().toString().equals(getString(R.string.piano))){
                 view.setBackgroundColor(Color.BLUE);
-            } else if (mSpInstruments.getSelectedItem().toString().equals("Recorder")){
+            } else if (mSpInstruments.getSelectedItem().toString().equals(getString(R.string.recorder))){
                 view.setBackgroundColor(Color.BLACK);
             }
         } else {

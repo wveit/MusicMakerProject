@@ -5,4 +5,7 @@
         <item>Guitar</item>
         <item>Recorder</item>
     </array>
+    <string name="guitar">Guitar</string>
+    <string name="piano">Piano</string>
+    <string name="recorder">Recorder</string>
 </resources>

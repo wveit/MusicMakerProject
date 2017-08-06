@@ -12,4 +12,20 @@ public class BeatAndMeasure {
         this.beat = beat;
         this.meausre = measure;
     }
+
+    public int getBeat() {
+        return beat;
+    }
+
+    public void setBeat(int beat) {
+        this.beat = beat;
+    }
+
+    public int getMeausre() {
+        return meausre;
+    }
+
+    public void setMeausre(int meausre) {
+        this.meausre = meausre;
+    }
 }
