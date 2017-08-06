@@ -7,6 +7,11 @@ public class Loop {
     private int mBeatsPerMeasure;
     private int mTempo;
     private String name;
+
+    public ArrayList<Tone> getmToneList() {
+        return mToneList;
+    }
+
     private ArrayList<Tone> mToneList;
 
     public Loop(int numMeasures, int beatsPerMeasure) {

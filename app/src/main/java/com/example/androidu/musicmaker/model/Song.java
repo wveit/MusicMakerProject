@@ -6,7 +6,9 @@ import java.util.ArrayList;
 public class Song {
     private int mNumMeasures;
     private int mBeatsPerMeasure;
+
     private ArrayList<Loop> mLoopList = new ArrayList<Loop>();
+
     private ArrayList<PlacedLoop> mPlacedLoopList = new ArrayList<PlacedLoop>();
 
 
@@ -73,6 +75,14 @@ public class Song {
 
     public void removePlacedLoop(int index){
         mPlacedLoopList.remove(index);
+    }
+
+    public ArrayList<Loop> getmLoopList() {
+        return mLoopList;
+    }
+
+    public ArrayList<PlacedLoop> getmPlacedLoopList() {
+        return mPlacedLoopList;
     }
 
     public void setTempo(int tempo){}

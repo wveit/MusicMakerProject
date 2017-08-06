@@ -9,14 +9,16 @@ import android.util.Log;
 
 public class SaverLoader {
 
-    public static final String tag = "tag";
+    public static final String tag = "jsonTEST";
 
     public static boolean save(Song song, String filename) {
 
         ObjectMapper mapper = new ObjectMapper();
         String json = "";
         try {
-            json = mapper.writeValueAsString(song);
+            json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(song);
+//            json = mapper.writeValueAsString(song);
+//            System.out.println(json);
             Log.d(tag, json);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
