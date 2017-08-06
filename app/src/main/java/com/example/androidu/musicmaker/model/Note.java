@@ -19,5 +19,19 @@ public enum Note {
         return mFreq;
     }
 
+    public String niceString() {
+        String badString = this.name();
+        String niceString = "";
+
+        if (badString.charAt(2) == 'S')
+            niceString = badString.charAt(0) + "#";
+        else if (badString.charAt(2) == 'F')
+            niceString = badString.charAt(0) + "b";
+        else
+            niceString = badString.charAt(0) + "";
+
+        return niceString;
+    }
+
 }
 
