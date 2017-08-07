@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -31,19 +32,34 @@ import com.example.androidu.musicmaker.model.Note;
 import com.example.androidu.musicmaker.model.Tone;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class LoopEditorActivity extends Activity {
 
 
 
     // These methods are called in response to a user action
-    void onTonePlacement(Tone newTone){}
-    void onPlayRequest(){}
-    void onPauseRequest(){}
-    void onLoopNameChange(String oldName, String newName){} // <--- figure this one out
-    void onChangeInstrument(Instrument oldInstrument, Instrument newInstrument){} // <--- this may not be necessary
-    void onChangeNumberOfLoopMeasures(int oldNumLoopMeasures, int newNumLoopMeasures){}
+    void onTonePlacement(Tone newTone){
+        //this is called when tone is placed by the user
+    }
+    void onPlayRequest(){
+        Toast.makeText(getApplicationContext(), "Play", Toast.LENGTH_SHORT).show();
+    }
+    void onPauseRequest(){
+        Toast.makeText(getApplicationContext(), "Pause", Toast.LENGTH_SHORT).show();
+    }
+    void onLoopNameChange(String oldName, String newName){
+        Toast.makeText(getApplicationContext(), oldName + "has been changed to " + newName + ".", Toast.LENGTH_SHORT).show();
+    } // <--- figure this one out
+    void onChangeInstrument(Instrument oldInstrument, Instrument newInstrument){
+        oldInstrument = newInstrument;
+    } // <--- this may not be necessary
+    void onChangeNumberOfLoopMeasures(int oldNumLoopMeasures, int newNumLoopMeasures){
+
+    }
     void onNoteScroll(Note oldLowNote, Note oldHighNote, Note newLowNote, Note newHighNote){} // <--- this may not be necessary
     void onMeasureScroll(int oldBeginMeasure, int oldEndMeasure, int newBeginMeasure, int newEndMeasure){} // <--- this may not be necessary
 
@@ -58,11 +74,16 @@ public class LoopEditorActivity extends Activity {
     LinearLayout mLnNotes;
     GridLayout gd;
     private static int mNumberOfMeasures = 5, mNumberOfBeats = 4, mZoomLevel = 1;
-    int noteIndex = -1, beatAndMeasureIndex = 1;
+    Instrument mInstrument;
+    Note mNote;
+    String oldFileName = "New_File", newFileName;
+    //piano is the default instrument for oldInstrument
+    Instrument oldInstrument = Instrument.PIANO, newInstrument;
 
     List<BeatAndMeasure> numberOfMeasuresList;
     List<Tone> tonePlacedByUser = new ArrayList<>();
-    int idForTone = 100;
+    List<String> addingViewDescription = new ArrayList<>();
+    List<String> mInstrumentForSpinner = new ArrayList<>();
 
     TextView tv;
 
@@ -72,6 +93,7 @@ public class LoopEditorActivity extends Activity {
         setContentView(R.layout.activity_loop_editor);
 
         mTvLoopName = (TextView) findViewById(R.id.tv_loopName);
+        mTvLoopName.append(oldFileName);
         mTvNoOfLoopsMeasure = (TextView) findViewById(R.id.tv_noLoopMeasure);
         mTvBeatsPerMeasure = (TextView) findViewById(R.id.tv_beatsPerMeausre);
         mTvRytherZoomLevel = (TextView) findViewById(R.id.tv_rytherZoomLevel);
@@ -81,9 +103,16 @@ public class LoopEditorActivity extends Activity {
 
         onUserInput();
 
-        Context context = getApplicationContext();
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.instruments, android.R.layout.simple_spinner_dropdown_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        Context context = getApplicationContext();
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.instruments, android.R.layout.simple_spinner_dropdown_item);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        mSpInstruments.setAdapter(adapter);
+
+        for(Instrument instrumentSp: Instrument.values()){
+            mInstrumentForSpinner.add(instrumentSp.toString());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mInstrumentForSpinner);
         mSpInstruments.setAdapter(adapter);
 
         mTvLoopName.setOnClickListener(new View.OnClickListener() {
@@ -101,8 +130,9 @@ public class LoopEditorActivity extends Activity {
                 newFileDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton)
                     {
-                        String fileName = edFileName.getText().toString();
-                        mTvLoopName.setText("Loop Name: \n" + fileName);
+                        newFileName = edFileName.getText().toString();
+                        mTvLoopName.setText("Loop Name: \n" + newFileName);
+                        onLoopNameChange(oldFileName, newFileName);
                     }
                 });
 
@@ -180,12 +210,15 @@ public class LoopEditorActivity extends Activity {
         mSpInstruments.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(mSpInstruments.getSelectedItem().toString().equals(getString(R.string.telephone))){
+                if(mSpInstruments.getSelectedItem().toString().equals(Instrument.TELEPHONE.toString())){
                     mTvInstrumentLegend.setBackgroundColor(Color.RED);
-                } else if(mSpInstruments.getSelectedItem().toString().equals(getString(R.string.piano))){
+                    newInstrument = Instrument.TELEPHONE;
+                } else if(mSpInstruments.getSelectedItem().toString().equals(Instrument.PIANO.toString())){
                     mTvInstrumentLegend.setBackgroundColor(Color.BLUE);
-                } else if(mSpInstruments.getSelectedItem().toString().equals(getString(R.string.trumpet))){
+                    newInstrument = Instrument.PIANO;
+                } else if(mSpInstruments.getSelectedItem().toString().equals(Instrument.TRUMPET.toString())){
                     mTvInstrumentLegend.setBackgroundColor(Color.BLACK);
+                    newInstrument = Instrument.TRUMPET;
                 }
             }
 
@@ -194,6 +227,7 @@ public class LoopEditorActivity extends Activity {
 
             }
         });
+        onChangeInstrument(oldInstrument, newInstrument);
     }
 
 
@@ -206,9 +240,11 @@ public class LoopEditorActivity extends Activity {
                 if (play) {
                     playPause.setImageResource(R.drawable.ic_pause_circle_filled_black_24px);
                     play = false;
+                    onPauseRequest();
                 } else {
                     playPause.setImageResource(R.drawable.ic_play_circle_filled_black_24px);
                     play = true;
+                    onPlayRequest();
                 }
             }
         });
@@ -220,10 +256,17 @@ public class LoopEditorActivity extends Activity {
         int mBeatCount = 1;
         int nextMeasurePrint = 0;
         boolean printMeasureNumber = true;
+        int noteIndex = -1, beatAndMeasureIndex = 1;
 
         numberOfMeasuresList = new ArrayList<>();
+        ArrayList<String> notesArray = new ArrayList<>();
 
-        String[] notes = {"C", "B", "Bb", "A", "Ab", "G", "F#", "F", "E", "Eb", "D", "C#", "C"};
+        for(Note noteString: Note.values()){
+            notesArray.add(noteString.niceString());
+        }
+
+
+        //String[] notesArray = {"C", "B", "Bb", "A", "Ab", "G", "F#", "F", "E", "Eb", "D", "C#", "C"};
 
         for(int i = 1; i <= (mNumberOfMeasures * mNumberOfBeats + 1); i++){
             if(i % mNumberOfBeats == 1){
@@ -238,16 +281,16 @@ public class LoopEditorActivity extends Activity {
         for(int g = 0; g < 1; g++) {
             gd = new GridLayout(this);
             gd.setColumnCount((mNumberOfMeasures * mNumberOfBeats) + 1);
-            gd.setRowCount(notes.length + 1);
+            gd.setRowCount(notesArray.size() + 1);
             mLnNotes.addView(gd);
             int rowHeadCount = 0;
-            for (int i = 0; i < ((mNumberOfMeasures * mNumberOfBeats + 1) * (notes.length + 1)); i++) {
+            for (int i = 0; i < ((mNumberOfMeasures * mNumberOfBeats + 1) * (notesArray.size() + 1)); i++) {
                 int check = mNumberOfMeasures * mNumberOfBeats + 1;
                 tv = new TextView(this);
                 tv.setGravity(Gravity.CENTER);
                 tv.setContentDescription("id: " + i);
-                tv.setHeight(100);
-                tv.setWidth(100);
+                tv.setHeight(80);
+                tv.setWidth(80);
                 tv.setId(i);
 
                 if(tv.getId() == 0){
@@ -269,15 +312,16 @@ public class LoopEditorActivity extends Activity {
                     }
                 } else if (tv.getId() > (mNumberOfMeasures * mNumberOfBeats) && tv.getId() % check == 0) {
                     check = check + mNumberOfMeasures * mNumberOfBeats;
-                    tv.setText(notes[rowHeadCount]);
+                    tv.setText(notesArray.get(rowHeadCount));
                     rowHeadCount++;
                     tv.setBackgroundResource(R.drawable.note_border);
                     noteIndex++;
                     beatAndMeasureIndex = 1;
                 } else {
-                    tv.setContentDescription(notes[noteIndex] + "-" + (numberOfMeasuresList.get(beatAndMeasureIndex).getMeausre() -1)
+                    tv.setContentDescription(notesArray.get(noteIndex) + "-" + (numberOfMeasuresList.get(beatAndMeasureIndex).getMeausre() -1)
                             + "-" + numberOfMeasuresList.get(beatAndMeasureIndex).getBeat() + "-" + "1");
                     beatAndMeasureIndex++;
+                    Log.d("TAG", "indexS: " + beatAndMeasureIndex);
 
                     tv.setBackgroundColor(getResources().getColor(R.color.buttonColor));
                     tv.setOnTouchListener(new View.OnTouchListener() {
@@ -297,35 +341,48 @@ public class LoopEditorActivity extends Activity {
         }
     }
 
-    public void tvClick(View view){
-        String instrument = null;
+    public void tvClick(View view) {
+        String instrument = "Deleting";
 
         ColorDrawable col = (ColorDrawable) view.getBackground();
         int colorCode = col.getColor();
-        if(colorCode == getColor(R.color.buttonColor)){
-            if(mSpInstruments.getSelectedItem().toString().equals(getString(R.string.telephone))){
+        if (colorCode == getColor(R.color.buttonColor)) {
+            if (mSpInstruments.getSelectedItem().toString().equals(Instrument.TELEPHONE.toString())) {
                 view.setBackgroundColor(Color.RED);
-                instrument = getString(R.string.telephone);
-            } else if(mSpInstruments.getSelectedItem().toString().equals(getString(R.string.piano))){
+                instrument = Instrument.TELEPHONE.toString();
+            } else if (mSpInstruments.getSelectedItem().toString().equals(Instrument.PIANO.toString())) {
                 view.setBackgroundColor(Color.BLUE);
-                instrument = getString(R.string.telephone);
-            } else if (mSpInstruments.getSelectedItem().toString().equals(getString(R.string.trumpet))){
+                instrument = Instrument.PIANO.toString();
+            } else if (mSpInstruments.getSelectedItem().toString().equals(Instrument.TRUMPET.toString())) {
                 view.setBackgroundColor(Color.BLACK);
-                instrument = getString(R.string.telephone);
+                instrument = Instrument.TRUMPET.toString();
             }
         } else {
             view.setBackgroundColor(getColor(R.color.buttonColor));
         }
 
         String viewDescription = view.getContentDescription().toString();
+        String completeToneString = instrument + "-" + viewDescription;
+        addingViewDescription.add(completeToneString);
         String[] splitViewDescription = viewDescription.split("-");
-        if (tonePlacedByUser.contains(viewDescription)) {
-            tonePlacedByUser.remove(viewDescription);
-        } else{
-            //tonePlacedByUser.add(new Tone(splitViewDescription[0], instrument, Integer.parseInt(splitViewDescription[1]), Integer.parseInt(splitViewDescription[2]), 1));
+
+        String noteFromTv = splitViewDescription[0];
+
+        for (Instrument ins : Instrument.values()) {
+            if (ins.toString().equals(instrument)) {
+                mInstrument = ins;
+            }
         }
 
-        Log.d("TAG", "note:" + viewDescription);
+        for (Note noteToAdd : Note.values()) {
+            if (noteToAdd.toString().equals(noteFromTv)) {
+                mNote = noteToAdd;
+            }
+        }
+
+        Log.d("TAG", "aaa:" + addingViewDescription);
+        Toast.makeText(getApplicationContext(), completeToneString, Toast.LENGTH_SHORT).show();
+        tonePlacedByUser.add(new Tone(mNote, mInstrument, Integer.parseInt(splitViewDescription[1]), Integer.parseInt(splitViewDescription[2]), 1));
     }
 }
 

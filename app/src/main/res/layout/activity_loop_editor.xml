@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Loop Name: \nNew_File"/>
+            android:text="Loop Name: \n"/>
         <TextView
             android:id="@+id/tv_noLoopMeasure"
             android:layout_width="wrap_content"
@@ -43,7 +43,6 @@
             android:layout_gravity="center"
             android:onClick="togglePlayPause"/>
 
-
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -58,7 +57,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_toRightOf="@+id/sp_instruments"
-                android:layout_alignBaseline="@+id/sp_instruments"/>
+                android:layout_alignBaseline="@+id/sp_instruments" />
         </RelativeLayout>
 
     </LinearLayout>
@@ -74,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="130dp"
+                android:layout_marginTop="530dp"
                 android:orientation="horizontal">
             </LinearLayout>
         </ScrollView>
