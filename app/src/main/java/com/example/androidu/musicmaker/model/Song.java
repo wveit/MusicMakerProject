@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Song {
     private int mNumMeasures;
     private int mBeatsPerMeasure;
+    private int loopID = 0;
 
     private ArrayList<Loop> mLoopList = new ArrayList<Loop>();
 
@@ -27,6 +28,8 @@ public class Song {
 
     public void addLoop(Loop loop){
         mLoopList.add(loop);
+        loop.setId(loopID);
+        loopID++;
     }
 
     public int getNumLoops(){

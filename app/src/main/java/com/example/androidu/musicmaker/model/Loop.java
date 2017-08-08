@@ -6,6 +6,16 @@ public class Loop {
     private int mNumMeasures;
     private int mBeatsPerMeasure;
     private int mTempo;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    private int id;
     private String name;
 
     public ArrayList<Tone> getmToneList() {
@@ -28,6 +38,7 @@ public class Loop {
         }
 
         mToneList = new ArrayList<Tone>();
+        this.setId(-1);
     }
 
     public String getName() { return name; }
