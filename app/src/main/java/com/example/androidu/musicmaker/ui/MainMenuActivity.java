@@ -45,7 +45,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
     }
     public void onNewSongSelected(){
-        Intent intent = new Intent(MainMenuActivity.this, LoopEditorActivity.class);
+        Intent intent = new Intent(MainMenuActivity.this, SongEditorActivity.class);
         startActivity(intent);
     }
 }

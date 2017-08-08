@@ -339,6 +339,7 @@ public class LoopEditorActivity extends Activity {
                 gd.addView(tv);
             }
         }
+        repopulateNotePlaced();
     }
 
     public void tvClick(View view) {
@@ -375,14 +376,35 @@ public class LoopEditorActivity extends Activity {
         }
 
         for (Note noteToAdd : Note.values()) {
-            if (noteToAdd.toString().equals(noteFromTv)) {
+            if (noteToAdd.niceString().equals(noteFromTv)) {
                 mNote = noteToAdd;
             }
         }
-
-        Log.d("TAG", "aaa:" + addingViewDescription);
         Toast.makeText(getApplicationContext(), completeToneString, Toast.LENGTH_SHORT).show();
         tonePlacedByUser.add(new Tone(mNote, mInstrument, Integer.parseInt(splitViewDescription[1]), Integer.parseInt(splitViewDescription[2]), 1));
+    }
+    public void repopulateNotePlaced(){
+        if(tonePlacedByUser.size() > 0) {
+            for (int i = 0; i < (gd.getColumnCount() * gd.getRowCount()); i++) {
+                for (int j = 0; j < tonePlacedByUser.size(); j++) {
+                    String comparingTobePlacedToLoop = tonePlacedByUser.get(j).getNote().niceString() + "-" + tonePlacedByUser.get(j).getStartMeasure()
+                            + "-" + tonePlacedByUser.get(j).getStartBeat() + "-" + tonePlacedByUser.get(j).getLengthInBeats();
+                    Log.d("TAG", "gd:" + comparingTobePlacedToLoop);
+                    if (gd.getChildAt(i).getContentDescription().equals(comparingTobePlacedToLoop)) {
+                        if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.TELEPHONE)) {
+                            gd.getChildAt(i).setBackgroundColor(Color.RED);
+                        }
+                        if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.PIANO)) {
+                            gd.getChildAt(i).setBackgroundColor(Color.BLUE);
+                        }
+                        if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.TRUMPET)) {
+                            gd.getChildAt(i).setBackgroundColor(Color.BLACK);
+                        }
+
+                    }
+                }
+            }
+        }
     }
 }
 
