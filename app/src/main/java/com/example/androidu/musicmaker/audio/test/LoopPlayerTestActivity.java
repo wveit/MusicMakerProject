@@ -44,10 +44,12 @@ public class LoopPlayerTestActivity extends AppCompatActivity {
             }
         });
 
-        loop = TestLoops.twinkleLoop();
+        loop = TestLoops.reverieLoop1();
 
         loopPlayer = new LoopPlayer();
         loopPlayer.setLoop(loop);
+        loopPlayer.setTempo(180);
+        loopPlayer.setRepeat(true);
 
     }
 

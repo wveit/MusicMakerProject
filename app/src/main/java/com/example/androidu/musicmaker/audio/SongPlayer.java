@@ -87,6 +87,7 @@ public class SongPlayer {
         if(mSong == null)
             return;
 
+        mGen.setTempo(mSong.getTempo());
         mGen.clearTones();
 
         /* add tones to mGen */

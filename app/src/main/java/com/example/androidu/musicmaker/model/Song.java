@@ -8,6 +8,7 @@ public class Song {
     private int mBeatsPerMeasure;
     private ArrayList<Loop> mLoopList = new ArrayList<Loop>();
     private ArrayList<PlacedLoop> mPlacedLoopList = new ArrayList<PlacedLoop>();
+    private int mTempo = 60;
 
 
     public Song(int numMeasures, int beatsPerMeasure){
@@ -75,6 +76,11 @@ public class Song {
         mPlacedLoopList.remove(index);
     }
 
-    public void setTempo(int tempo){}
-    public int getTempo(){return 0;}
+    public void setTempo(int tempo){
+        mTempo = tempo;
+    }
+
+    public int getTempo(){
+        return mTempo;
+    }
 }

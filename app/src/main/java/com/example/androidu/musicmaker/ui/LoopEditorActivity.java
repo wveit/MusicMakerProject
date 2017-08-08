@@ -1,7 +1,6 @@
 package com.example.androidu.musicmaker.ui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -88,7 +87,7 @@ public class LoopEditorActivity extends Activity {
     TextView tv;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loop_editor);
 

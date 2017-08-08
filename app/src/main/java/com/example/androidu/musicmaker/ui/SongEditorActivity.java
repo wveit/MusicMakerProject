@@ -62,8 +62,8 @@ public class SongEditorActivity extends Activity {
         mLnEdit = (LinearLayout) findViewById(R.id.ln_edit);
         mLnPlay = (LinearLayout) findViewById(R.id.ln_play);
 
-        mLnEdit.setBackgroundResource(R.drawable.border_style);
-        mLnPlay.setBackgroundResource(R.drawable.border_style);
+        mLnEdit.setBackgroundResource(R.drawable.border_style2);
+        mLnPlay.setBackgroundResource(R.drawable.border_style2);
 
         songEditorNotePlacer();
 

@@ -2,15 +2,18 @@ package com.example.androidu.musicmaker.ui;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
 import com.example.androidu.musicmaker.R;
 
-public class MainMenuActivity extends AppCompatActivity {
+public class MainMenuActivity extends Activity {
 
     public void onEditSongSelected(String songName){}
+
     public void onDeleteSongSelected(){}
 
     @Override
