@@ -7,9 +7,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,23 +26,26 @@ public class SaverLoader {
 
         ObjectMapper mapper = new ObjectMapper();
         String json = "";
+
+        FileOutputStream outputStream;
+
+
         try {
-            json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(song);
-//            json = mapper.writeValueAsString(song);
+//            json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(song);
+            json = mapper.writeValueAsString(song);
 //            System.out.println(json);
+
+            outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write(json.getBytes());
+            outputStream.close();
 //            Log.d(tag, json);
+            Toast.makeText(context, "Saved!", Toast.LENGTH_LONG).show();
+
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
-            outputStreamWriter.write(json);
-            outputStreamWriter.close();
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-
         return true;
     }
 
@@ -64,6 +69,9 @@ public class SaverLoader {
                 json = stringBuilder.toString();
 
             }
+
+            Log.d(tag, json);
+            Toast.makeText(context, "Loaded!", Toast.LENGTH_LONG).show();
         }
         catch (FileNotFoundException e) {
             Log.e("login activity", "File not found: " + e.toString());
