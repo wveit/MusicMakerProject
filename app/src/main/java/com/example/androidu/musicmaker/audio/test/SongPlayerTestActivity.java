@@ -46,7 +46,7 @@ public class SongPlayerTestActivity extends AppCompatActivity {
             }
         });
 
-        song = TestSongs.twinkleHarmony();
+        song = TestSongs.reverie();
 
         songPlayer = new SongPlayer();
         songPlayer.setSong(song);

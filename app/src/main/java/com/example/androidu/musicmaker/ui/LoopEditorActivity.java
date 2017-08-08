@@ -1,14 +1,18 @@
 package com.example.androidu.musicmaker.ui;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.LinearLayout;
 
+import com.example.androidu.musicmaker.R;
 import com.example.androidu.musicmaker.model.Instrument;
 import com.example.androidu.musicmaker.model.Loop;
 import com.example.androidu.musicmaker.model.Note;
 import com.example.androidu.musicmaker.model.Tone;
 
-public class LoopEditorActivity extends AppCompatActivity {
+public class LoopEditorActivity extends Activity {
 
+    LinearLayout parent;
     // These methods are called in response to a user action
     void onTonePlacement(Tone newTone){}
     void onPlayRequest(){}
@@ -21,6 +25,13 @@ public class LoopEditorActivity extends AppCompatActivity {
 
     // These methods are used to control the activity
     void setLoop(Loop loop){}
+    @Override
+    protected void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_loop_editor);
+
+
+    }
 }
 
 
