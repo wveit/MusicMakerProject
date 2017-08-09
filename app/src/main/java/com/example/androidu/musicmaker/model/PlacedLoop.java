@@ -22,7 +22,7 @@ public class PlacedLoop {
     public int getStartMeasure(){return mStartMeasure;}
     public int getStartBeat(){return mStartBeat;}
     public int getRowNumber(){return mRowNumnber;}
-    public int getId() {return id;}
+    public int getId() {return mLoop.getId();}
 
     // Note: If we use an index for the loop instead of loop reference, this class can be immutable
 
