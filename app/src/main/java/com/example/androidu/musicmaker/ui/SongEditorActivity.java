@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.example.androidu.musicmaker.R;
 import com.example.androidu.musicmaker.audio.SongPlayer;
 import com.example.androidu.musicmaker.audio.test.TestSongs;
+import com.example.androidu.musicmaker.filesystem.SaverLoader;
 import com.example.androidu.musicmaker.model.Loop;
 import com.example.androidu.musicmaker.model.PlacedLoop;
 import com.example.androidu.musicmaker.model.Song;
@@ -63,8 +64,8 @@ public class SongEditorActivity extends Activity {
         mRectDragView.setYDragEnabled(false);
 
 
-        mSong = TestSongs.reverie();
-        mSong.setTempo(150);
+//        mSong = TestSongs.reverie();
+//        mSong.setTempo(150);
         if(mSong == null) {
             if(Globals.currentSong == null)
                 mSong = new Song(10, 4);
@@ -182,6 +183,12 @@ public class SongEditorActivity extends Activity {
         updateActivityFromSong();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SaverLoader.save(mSong, mSong.getName(), this);
+    }
+
     void onLoopPlacement(Loop loop, int startMeasure, int startBeat, int row){
         PlacedLoop ploop = new PlacedLoop(loop, startMeasure, startBeat, row);
         mSong.addPlacedLoop(ploop);
@@ -219,6 +226,7 @@ public class SongEditorActivity extends Activity {
     void onCreateLoopRequest(){
         Intent intent = new Intent(SongEditorActivity.this, LoopEditorActivity.class);
         Loop loop = new Loop(5, mSong.getBeatsPerMeasure());
+        loop.setName("new-loop");
         mSong.addLoop(loop);
         Globals.currentLoop = loop;
         startActivity(intent);
