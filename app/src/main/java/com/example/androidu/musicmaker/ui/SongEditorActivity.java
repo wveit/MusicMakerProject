@@ -322,7 +322,7 @@ public class SongEditorActivity extends Activity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, loopNameList);
         mLoopSpinner.setAdapter(adapter);
 
-        // update mLoopColorTextView with the color of the currently selected loop
+        // update mIntrumentColorTextView with the color of the currently selected loop
         int currentSelectedLoopId = loopIdFromName((String)mLoopSpinner.getSelectedItem());
         if(currentSelectedLoopId >= 0)
             mLoopColorTextView.setBackgroundColor(ColorHelper.getColor(currentSelectedLoopId));

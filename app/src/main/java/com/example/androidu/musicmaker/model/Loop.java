@@ -48,10 +48,12 @@ public class Loop {
     public int getNumMeasures() {
         return mNumMeasures;
     }
+    public void setNumMeasures(int numMeasures){mNumMeasures = numMeasures;}
 
     public int getBeatsPerMeasure() {
         return mBeatsPerMeasure;
     }
+    public void setBeatsPerMeasure(int bpm){mBeatsPerMeasure = bpm;}
 
     public int getNumTones() {
         return mToneList.size();
