@@ -13,12 +13,13 @@
         android:layout_height="match_parent"
         android:background="@color/menuBackground"
         android:padding="15dp">
+
         <TextView
             android:id="@+id/tv_projectName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Project Name: New_Project"/>
+            android:text="Song Name: New_Project" />
         <TextView
             android:id="@+id/tv_noLoopMeasureSE"
             android:layout_width="wrap_content"
@@ -31,12 +32,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Beats per Measure: 4"/>
-        <TextView
-            android:id="@+id/tv_rytherZoomLevelSE"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Rhythm Zoom Level: 1"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"

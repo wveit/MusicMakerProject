@@ -7,7 +7,7 @@ public class PlacedLoop {
     private int mStartMeasure;
     private int mStartBeat;
     private int mRowNumnber;
-    private int id;
+    private int id;  // is there a reason for this and the getId() method?
 
     public PlacedLoop(Loop loop, int startMeasure, int startBeat, int rowNumber){
         mLoop = loop;

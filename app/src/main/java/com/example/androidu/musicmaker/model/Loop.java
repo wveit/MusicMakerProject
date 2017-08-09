@@ -64,18 +64,31 @@ public class Loop {
     }
 
     public int findToneAt(Note note, int measure, int beat) { //Find int of Tone in arrayList
-        for (int i = 0; i < mToneList.size(); i++) { //Loop through Tone List
-            int beatLength = mToneList.get(i).getLengthInBeats(); //Entire Beat Length
-            int beatStart = mToneList.get(i).getStartBeat(); //Starting beat in measure
-            int measureStart = mToneList.get(i).getStartMeasure(); // Starting measure
-            int markerStart = ((measureStart * 4) + beatStart); //Starting CheckPoint
-            int markerEnd = markerStart + beatLength; //Ending CheckPoint
-            int beatMarker = ((4 * measure) + beat);
 
-            if (beatMarker >= markerStart && beatMarker <= markerEnd) {
+        for (int i = 0; i < mToneList.size(); i++) {
+            Tone tone = mToneList.get(i);
+            if(tone.getNote() != note)
+                continue;
+
+            int startCode = (tone.getStartMeasure()-1) * mBeatsPerMeasure + tone.getStartBeat()-1;
+            int endCode = startCode + tone.getLengthInBeats() - 1;
+            int targetCode = (measure-1) * mBeatsPerMeasure + beat-1;
+
+            if(targetCode >= startCode && targetCode <= endCode)
                 return i;
-            }
+
+//            int beatLength = mToneList.get(i).getLengthInBeats();
+//            int beatStart = mToneList.get(i).getStartBeat();
+//            int measureStart = mToneList.get(i).getStartMeasure();
+//            int markerStart = ((measureStart * 4) + beatStart);
+//            int markerEnd = markerStart + beatLength;
+//            int beatMarker = ((4 * measure) + beat);
+//
+//            if (beatMarker >= markerStart && beatMarker <= markerEnd) {
+//                return i;
+
         }
+
         return -1;
     }
 

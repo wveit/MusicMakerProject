@@ -68,15 +68,14 @@ public class Song {
 
     public int findPlacedLoopAt(int rowNumber, int measure, int beat){
 
-        for(int i = 0; i <= mPlacedLoopList.size(); i++){
+        for(int i = 0; i < mPlacedLoopList.size(); i++){
             PlacedLoop ploop = mPlacedLoopList.get(i);
             if(rowNumber == ploop.getRowNumber()){
                 int startingBeatCode = ploop.getStartBeat() + (ploop.getStartMeasure() - 1) * 4;
-                //                            2             +                     3         * 4
+
                 int endingBeatCode = startingBeatCode + ploop.getLoop().getNumMeasures() * 4 - 1;
 
                 int targetBeatCode = (measure - 1) * 4 + beat;
-                //                       (2 - 1 )  * 4 + 2 where the you are pointing it at
 
                 if(targetBeatCode >= startingBeatCode && targetBeatCode <= endingBeatCode){
                     return i;

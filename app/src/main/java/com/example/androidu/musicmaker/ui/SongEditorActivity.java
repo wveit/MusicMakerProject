@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -75,7 +74,7 @@ public class SongEditorActivity extends Activity {
 
 
         player.setSong(mSong);
-        updateScreen();
+        updateActivityFromSong();
         updateSpinner();
 
 
@@ -151,8 +150,36 @@ public class SongEditorActivity extends Activity {
         });
     }
 
-    void updateScreen(){
+    void updateActivityFromSong(){
+        mRectDragView.clearRects();
+        for(int i = 0; i < mSong.getNumPlacedLoops(); i++){
+            PlacedLoop ploop = mSong.getPlacedLoop(i);
+            Loop loop = ploop.getLoop();
 
+            int loopId = loop.getId();
+            int color = ColorHelper.getColor(loopId);
+
+            int measure = ploop.getStartMeasure();
+            int beat = ploop.getStartBeat();
+            int beatCode = (measure - 1) * loop.getBeatsPerMeasure() + beat - 1;
+
+            int length = loop.getNumMeasures() * loop.getBeatsPerMeasure();
+
+            int row = ploop.getRowNumber();
+
+            mRectDragView.addRect(beatCode, row, beatCode + length - 1, row, color);
+        }
+
+        mSongNameTextView.setText("Song Name: " + mSong.getName());
+        mBeatsPerMeasureTextView.setText("Beats Per Measure: " + mSong.getBeatsPerMeasure());
+        mNumMeasuresTextView.setText("Num Measures: " + mSong.getNumMeasures());
+        updateSpinner();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateActivityFromSong();
     }
 
     void onLoopPlacement(Loop loop, int startMeasure, int startBeat, int row){
@@ -247,8 +274,7 @@ public class SongEditorActivity extends Activity {
                 int numMeasures = Integer.parseInt(loopNumbers);
                 mSong.setNumMeasures(numMeasures);
                 Log.d("TAG", "sudip:" + loopNumbers);
-                onCreate(null);
-                mNumMeasuresTextView.setText("Number of loop \n Measures: " + loopNumbers);
+                updateActivityFromSong();
 
             }
         });
@@ -279,8 +305,7 @@ public class SongEditorActivity extends Activity {
                 String beatPerMeasure = edNumLoop.getText().toString();
                 int bpm = Integer.parseInt(beatPerMeasure);
                 mSong.setBeatsPerMeasure(bpm);
-                onCreate(null);
-                mBeatsPerMeasureTextView.setText("Number of loop Measures: " + beatPerMeasure);
+                updateActivityFromSong();
             }
         });
 
@@ -312,7 +337,6 @@ public class SongEditorActivity extends Activity {
         if(mCurrentlySelectedLoopId < 0)
             return;
 
-
         Loop loop = mSong.getLoop(mCurrentlySelectedLoopId);
         int row = y1;
         int noteCode = Math.min(x1, x2);
@@ -320,9 +344,16 @@ public class SongEditorActivity extends Activity {
         int beat = noteCode % mSong.getBeatsPerMeasure() + 1;
         int loopLength = loop.getNumMeasures() * loop.getBeatsPerMeasure();
 
-        onLoopPlacement(loop, measure, beat, row);
-        int color = ColorHelper.getColor(mCurrentlySelectedLoopId);
-        mRectDragView.addRect(x1, y1, x1 + loopLength, y2, color);
+        int id = mSong.findPlacedLoopAt(row, measure, beat);
+        if(id >= 0){
+            mSong.removePlacedLoop(id);
+            updateActivityFromSong();
+        }
+        else{
+            onLoopPlacement(loop, measure, beat, row);
+            int color = ColorHelper.getColor(mCurrentlySelectedLoopId);
+            mRectDragView.addRect(x1, y1, x1 + loopLength, y2, color);
+        }
     }
 
     private void updateSpinner(){

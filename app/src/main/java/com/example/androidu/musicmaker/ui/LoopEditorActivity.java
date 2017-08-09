@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 
 import com.example.androidu.musicmaker.R;
 import com.example.androidu.musicmaker.audio.LoopPlayer;
-import com.example.androidu.musicmaker.audio.test.TestLoops;
 import com.example.androidu.musicmaker.model.Instrument;
 import com.example.androidu.musicmaker.model.Loop;
 import com.example.androidu.musicmaker.model.Note;
@@ -27,8 +25,8 @@ import java.util.ArrayList;
 
 public class LoopEditorActivity extends Activity {
 
-
-    LoopPlayer player = new LoopPlayer();private Loop mLoop;
+    Loop mLoop;
+    LoopPlayer player = new LoopPlayer();
     TextView mIntrumentColorTextView;
     Spinner mInstrumentSpinner;
     ImageView mPlayPauseImage;
@@ -58,12 +56,12 @@ public class LoopEditorActivity extends Activity {
         mRectDragView.setNumColumns(20);
         mRectDragView.setYDragEnabled(false);
 
-        if(mLoop == null) {
-            if (Globals.currentLoop == null)
-                mLoop = new Loop(2, 4);
-            else
-                mLoop = Globals.currentLoop;
-        }
+        mLoop = new Loop(2, 4);
+        mLoop.setName("new_loop");
+
+        if (Globals.currentLoop != null)
+            mLoop = Globals.currentLoop;
+
 
         mLoopNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,13 +119,12 @@ public class LoopEditorActivity extends Activity {
             }
         });
 
+        updateActivityFromLoop();
         player.setLoop(mLoop);
-        updateScreen();
-        updateSpinner();
     }
 
-    void updateScreen(){
-        Log.d("LoopEditorActivity", "updateScreen()");
+    void updateActivityFromLoop(){
+        Log.d("LoopEditorActivity", "updateActivityFromSong()");
         mRectDragView.clearRects();
         for(int i = 0; i < mLoop.getNumTones(); i++){
             Tone tone = mLoop.getTone(i);
@@ -143,12 +140,17 @@ public class LoopEditorActivity extends Activity {
             int beatCode = (measure - 1) * mLoop.getBeatsPerMeasure() + beat - 1;
 
             int length = tone.getLengthInBeats();
-
-            Log.d("LoopEditorActivity", "updateScreen() -> " + beatCode + "  " + row + "  " + (beatCode+length-1) + "  " + row + "  "  + color);
-
+            Log.d("LoopEditorActivity", "updateActivityFromSong() -> " + beatCode + "  " + row + "  " + (beatCode+length-1) + "  " + row + "  "  + color);
             mRectDragView.addRect(beatCode, row, beatCode + length - 1, row, color);
         }
+
+        mLoopNameTextView.setText("Loop Name: " + mLoop.getName());
+        mBeatsPerMeasureTextView.setText("Beats per measure: " + mLoop.getBeatsPerMeasure());
+        mNumMeasuresTextView.setText("Num Measures: " + mLoop.getNumMeasures());
+
+        updateSpinner();
     }
+
 
     void onTonePlacement(Tone tone){
         mLoop.addTone(tone);
@@ -279,12 +281,21 @@ public class LoopEditorActivity extends Activity {
 
 
     public void rectangleDrag(int x1, int y1, int x2, int y2){
-        Note note = Note.values()[y1];
+
+        Note note = Note.values()[Note.values().length - 1 - y1];
         int noteCode1 = Math.min(x1, x2);
         int noteCode2 = Math.max(x1, x2);
         int measure = noteCode1 / mLoop.getBeatsPerMeasure() + 1;
         int beat = noteCode1 % mLoop.getBeatsPerMeasure() + 1;
         int toneLength = noteCode2 - noteCode1 + 1;
+
+        int id = mLoop.findToneAt(note, measure, beat);
+        Log.d("LoopEditorActivity", "id to remove: " + id);
+        if(id >= 0){
+            mLoop.removeTone(id);
+            updateActivityFromLoop();
+            return;
+        }
 
         Tone tone = new Tone(note, mCurrentlySelectedInstrument, measure, beat, toneLength);
         onTonePlacement(tone);

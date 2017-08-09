@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.androidu.musicmaker.R;
+import com.example.androidu.musicmaker.model.Song;
 
 public class MainMenuActivity extends Activity {
 
@@ -48,6 +49,8 @@ public class MainMenuActivity extends Activity {
 
     }
     public void onNewSongSelected(){
+        Song song = new Song(10, 4);
+        Globals.currentSong = song;
         Intent intent = new Intent(MainMenuActivity.this, SongEditorActivity.class);
         startActivity(intent);
     }
