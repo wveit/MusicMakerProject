@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.androidu.musicmaker.R;
 import com.example.androidu.musicmaker.audio.LoopPlayer;
+import com.example.androidu.musicmaker.audio.test.TestLoops;
 import com.example.androidu.musicmaker.model.Instrument;
 import com.example.androidu.musicmaker.model.Loop;
 import com.example.androidu.musicmaker.model.Note;
@@ -62,13 +63,7 @@ public class LoopEditorActivity extends Activity {
                 mLoop = new Loop(2, 4);
             else
                 mLoop = Globals.currentLoop;
-
-//        mLoop = TestLoops.reverieLoop1();
         }
-
-        updateSpinner();
-
-
 
         mLoopNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,8 +122,33 @@ public class LoopEditorActivity extends Activity {
         });
 
         player.setLoop(mLoop);
+        updateScreen();
+        updateSpinner();
     }
 
+    void updateScreen(){
+        Log.d("LoopEditorActivity", "updateScreen()");
+        mRectDragView.clearRects();
+        for(int i = 0; i < mLoop.getNumTones(); i++){
+            Tone tone = mLoop.getTone(i);
+
+            Note note = tone.getNote();
+            int row = (Note.values().length - 1) - note.ordinal();
+
+            Instrument instrument = tone.getInstrument();
+            int color = ColorHelper.getColor(instrument.ordinal());
+
+            int measure = tone.getStartMeasure();
+            int beat = tone.getStartBeat();
+            int beatCode = (measure - 1) * mLoop.getBeatsPerMeasure() + beat - 1;
+
+            int length = tone.getLengthInBeats();
+
+            Log.d("LoopEditorActivity", "updateScreen() -> " + beatCode + "  " + row + "  " + (beatCode+length-1) + "  " + row + "  "  + color);
+
+            mRectDragView.addRect(beatCode, row, beatCode + length - 1, row, color);
+        }
+    }
 
     void onTonePlacement(Tone tone){
         mLoop.addTone(tone);

@@ -29,7 +29,131 @@ import java.util.ArrayList;
 public class SongEditorActivity extends Activity {
 
     private static final String EMPTY_SPINNER_STRING = "<no loops>";
+    private static final int MAX_NUM_ROWS = 10;
+
+    private Song mSong;
     private SongPlayer player = new SongPlayer();
+    TextView mLoopColorTextView;
+    private Spinner mLoopSpinner;
+    ImageView mPlayPauseImage;
+    Button mNewLoopButton;
+    ImageView mEditLoopImage;
+    TextView mSongNameTextView, mNumMeasuresTextView, mBeatsPerMeasureTextView;
+    boolean mPlayPauseImageIsPlay = true;
+    int mCurrentlySelectedLoopId = -1;
+    RectangleDragView mRectDragView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_song_editor);
+
+        mLoopSpinner = (Spinner) findViewById(R.id.sp_instrumentsSE);
+        mSongNameTextView = (TextView) findViewById(R.id.tv_projectName);
+        mNumMeasuresTextView = (TextView) findViewById(R.id.tv_noLoopMeasureSE);
+        mBeatsPerMeasureTextView = (TextView) findViewById(R.id.tv_beatsPerMeausreSE);
+        mNewLoopButton = (Button) findViewById(R.id.btn_createNewLoop);
+        mEditLoopImage = (ImageView) findViewById(R.id.im_edit_loop);
+        mLoopColorTextView = (TextView) findViewById(R.id.tv_spinner_legendSE);
+        mPlayPauseImage = (ImageView) findViewById(R.id.im_playPauseSE);
+        mRectDragView = (RectangleDragView) findViewById(R.id.rect_drag_view);
+
+
+        mRectDragView.setNumRows(MAX_NUM_ROWS);
+        mRectDragView.setNumColumns(20);
+        mRectDragView.setYDragEnabled(false);
+
+
+        mSong = TestSongs.reverie();
+        mSong.setTempo(150);
+        if(mSong == null) {
+            if(Globals.currentSong == null)
+                mSong = new Song(10, 4);
+            else
+                mSong = Globals.currentSong;
+        }
+
+
+        player.setSong(mSong);
+        updateScreen();
+        updateSpinner();
+
+
+        mNewLoopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCreateLoopRequest();
+            }
+        });
+
+        mSongNameTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onEditSongNameRequest();
+            }
+        });
+
+        mNumMeasuresTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onEditNumMeasures();
+            }
+        });
+
+        mBeatsPerMeasureTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onEditBeatsPerMeasure();
+            }
+        });
+
+        mPlayPauseImage.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(mPlayPauseImageIsPlay) {
+                    onPlayRequest();
+                } else
+                    onPauseRequest();
+            }
+        });
+
+        mEditLoopImage.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                onEditLoopRequest();
+            }
+        });
+
+        mRectDragView.setDragListener(new RectangleDragView.RectangleDragListener(){
+            @Override
+            public void onRectangleDrag(int x1, int y1, int x2, int y2){
+                SongEditorActivity.this.rectangleDrag(x1, y1, x2, y2);
+            }
+        });
+
+        mLoopSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selection = (String)parent.getItemAtPosition(position);
+                if(selection.equals(EMPTY_SPINNER_STRING))
+                    return;
+
+                mCurrentlySelectedLoopId = loopIdFromName(selection);
+                int color = ColorHelper.getColor(mCurrentlySelectedLoopId);
+                mLoopColorTextView.setBackgroundColor(color);
+                mRectDragView.setDragRectColor(color);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    void updateScreen(){
+
+    }
 
     void onLoopPlacement(Loop loop, int startMeasure, int startBeat, int row){
         PlacedLoop ploop = new PlacedLoop(loop, startMeasure, startBeat, row);
@@ -176,123 +300,11 @@ public class SongEditorActivity extends Activity {
 
 
 
-    private Song mSong;
-    TextView mLoopColorTextView;
-    private Spinner mLoopSpinner;
-    ImageView mPlayPauseImage;
-    Button mNewLoopButton;
-    ImageView mEditLoopImage;
-    TextView mSongNameTextView, mNumMeasuresTextView, mBeatsPerMeasureTextView;
-    boolean mPlayPauseImageIsPlay = true;
-    int mCurrentlySelectedLoopId = -1;
-    RectangleDragView mRectDragView;
 
 
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_song_editor);
 
-        mLoopSpinner = (Spinner) findViewById(R.id.sp_instrumentsSE);
-        mSongNameTextView = (TextView) findViewById(R.id.tv_projectName);
-        mNumMeasuresTextView = (TextView) findViewById(R.id.tv_noLoopMeasureSE);
-        mBeatsPerMeasureTextView = (TextView) findViewById(R.id.tv_beatsPerMeausreSE);
-        mNewLoopButton = (Button) findViewById(R.id.btn_createNewLoop);
-        mEditLoopImage = (ImageView) findViewById(R.id.im_edit_loop);
-        mLoopColorTextView = (TextView) findViewById(R.id.tv_spinner_legendSE);
-        mPlayPauseImage = (ImageView) findViewById(R.id.im_playPauseSE);
-        mRectDragView = (RectangleDragView) findViewById(R.id.rect_drag_view);
-
-
-        mRectDragView.setNumRows(20);
-        mRectDragView.setNumColumns(20);
-        mRectDragView.setYDragEnabled(false);
-
-//        if(Globals.currentSong == null)
-//            mSong = new Song(10, 4);
-//        else
-//            mSong = Globals.currentSong;
-
-        mSong = TestSongs.reverie();
-
-        updateSpinner();
-
-
-        mNewLoopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCreateLoopRequest();
-            }
-        });
-
-        mSongNameTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onEditSongNameRequest();
-            }
-        });
-
-        mNumMeasuresTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onEditNumMeasures();
-            }
-        });
-
-        mBeatsPerMeasureTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onEditBeatsPerMeasure();
-            }
-        });
-
-        mPlayPauseImage.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                if(mPlayPauseImageIsPlay) {
-                    onPlayRequest();
-                } else
-                    onPauseRequest();
-            }
-        });
-
-        mEditLoopImage.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                onEditLoopRequest();
-            }
-        });
-
-        mRectDragView.setDragListener(new RectangleDragView.RectangleDragListener(){
-            @Override
-            public void onRectangleDrag(int x1, int y1, int x2, int y2){
-                SongEditorActivity.this.rectangleDrag(x1, y1, x2, y2);
-            }
-        });
-
-        mLoopSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selection = (String)parent.getItemAtPosition(position);
-                if(selection.equals(EMPTY_SPINNER_STRING))
-                    return;
-
-                mCurrentlySelectedLoopId = loopIdFromName(selection);
-                int color = ColorHelper.getColor(mCurrentlySelectedLoopId);
-                mLoopColorTextView.setBackgroundColor(color);
-                mRectDragView.setDragRectColor(color);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        player.setSong(mSong);
-    }
 
 
 
@@ -322,10 +334,14 @@ public class SongEditorActivity extends Activity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, loopNameList);
         mLoopSpinner.setAdapter(adapter);
 
-        // update mIntrumentColorTextView with the color of the currently selected loop
-        int currentSelectedLoopId = loopIdFromName((String)mLoopSpinner.getSelectedItem());
-        if(currentSelectedLoopId >= 0)
-            mLoopColorTextView.setBackgroundColor(ColorHelper.getColor(currentSelectedLoopId));
+        // update mLoopColorTextView with the color of the currently selected loo
+
+        mCurrentlySelectedLoopId = loopIdFromName((String)mLoopSpinner.getSelectedItem());
+        if(mCurrentlySelectedLoopId >= 0) {
+            int color = ColorHelper.getColor(mCurrentlySelectedLoopId);
+            mLoopColorTextView.setBackgroundColor(color);
+            mRectDragView.setDragRectColor(color);
+        }
     }
 
     private int loopIdFromName(String name){

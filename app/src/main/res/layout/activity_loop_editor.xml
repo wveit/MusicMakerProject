@@ -53,7 +53,7 @@
                 android:layout_toRightOf="@+id/sp_instrumentsSE"
                 android:layout_alignBaseline="@+id/sp_instrumentsSE" />
         </RelativeLayout>
-        
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
