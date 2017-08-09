@@ -22,32 +22,16 @@
 
 
         <activity android:name=".filesystem.test.fileSaveActivityTest">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
 
-        <activity android:name=".ui.LoopEditorActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity android:name=".ui.LoopEditorActivity" android:screenOrientation="landscape">
         </activity>
 
-        <activity android:name=".ui.SongEditorActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity android:name=".ui.SongEditorActivity" android:screenOrientation="landscape">
         </activity>
 
         <activity android:name=".audio.test.LoopPlayerTestActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
 
