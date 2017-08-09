@@ -32,6 +32,22 @@ public class TestLoops {
         return loop;
     }
 
+    public static Loop samsLoop(){
+        Loop loop = new Loop(4, 4);
+
+        Instrument instrument = Instrument.PERCUSSION;
+        loop.addTone(new Tone(Note.C_5, instrument, 1, 1, 1));
+        loop.addTone(new Tone(Note.D_5, instrument, 1, 2, 1));
+        loop.addTone(new Tone(Note.E_5, instrument, 1, 3, 1));
+        loop.addTone(new Tone(Note.F_5, instrument, 1, 4, 1));
+        loop.addTone(new Tone(Note.G_5, instrument, 2, 1, 1));
+        loop.addTone(new Tone(Note.A_5, instrument, 2, 2, 1));
+        loop.addTone(new Tone(Note.B_5, instrument, 2, 3, 1));
+        loop.addTone(new Tone(Note.C_6, instrument, 2, 4, 1));
+
+        return loop;
+    }
+
     public static Loop reverieLoop1(){
         Loop loop = new Loop(4, 4);
         loop.setName("reverie loop 1");

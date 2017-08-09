@@ -44,7 +44,7 @@ public class LoopPlayerTestActivity extends AppCompatActivity {
             }
         });
 
-        loop = TestLoops.reverieLoop1();
+        loop = TestLoops.samsLoop();
 
         loopPlayer = new LoopPlayer();
         loopPlayer.setLoop(loop);
