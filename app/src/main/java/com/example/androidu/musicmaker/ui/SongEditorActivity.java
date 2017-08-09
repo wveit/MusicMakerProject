@@ -1,16 +1,22 @@
 package com.example.androidu.musicmaker.ui;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -29,28 +35,78 @@ import java.util.List;
 
 public class SongEditorActivity extends Activity {
 
+    private Song mSong = null;
+
     // These methods are called in response to a user action
-    void onLoopPlacement(Loop loop, int startMeasure, int startBeat){}
-    void onPlayRequest(){}
-    void onPauseRequest(){}
-    void onEditLoopRequest(Loop loop){}
-    void onCreateLoopRequest(){}
-    void onEditSongNameRequest(){}
+    void onLoopPlacement(Loop loop, int startMeasure, int startBeat){
+
+    }
+    void onPlayRequest(){
+        mPlayPause.setImageResource(R.drawable.ic_pause_black_24px);
+        play = false;
+    }
+    void onPauseRequest(){
+        mPlayPause.setImageResource(R.drawable.ic_play_arrow_black_24px);
+        play = true;
+
+    }
+    void onEditLoopRequest(Loop loop){
+        Intent loopEditorIntent = new Intent(this, LoopEditorActivity.class);
+        startActivity(loopEditorIntent);
+
+    }
+    void onCreateLoopRequest(){
+        Intent intent = new Intent(SongEditorActivity.this, LoopEditorActivity.class);
+        startActivity(intent);
+    }
+    void onEditSongNameRequest(){
+        LayoutInflater layoutInflater = LayoutInflater.from(SongEditorActivity.this);
+        final View newFileView = layoutInflater.inflate(R.layout.activity_new_filename, null);
+        AlertDialog.Builder newFileDialog = new AlertDialog.Builder(SongEditorActivity.this);
+
+        newFileDialog.setTitle("Name of the file: ");
+        newFileDialog.setView(newFileView);
+
+        final EditText edFileName = (EditText) newFileView.findViewById(R.id.ed_filename);
+
+        newFileDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                newProjectName = edFileName.getText().toString();
+                mTvProjectName.setText("Loop Name: \n" + newProjectName);
+            }
+        });
+
+        newFileDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+        newFileDialog.show();
+    }
     void onExportSongRequest(){}
     void onTempoChange(int newTempo){}
     void onVolumeChange(int newVolume){}
 
     // These methods control the activity
-    void setSong(Song song){}
+    void setSong(Song song){
+        mSong = song;
+    }
 
     List<BeatAndMeasure> numberOfMeasuresList;
-    List<String> mInstrumentForSpinner = new ArrayList<>();
+    List<String> mListForSpinner = new ArrayList<>();
     private static int mNumberOfMeasures = 5, mNumberOfBeats = 4, mZoomLevel = 1;
     GridLayout gd;
     LinearLayout mLnNotes;
-    TextView tv;
-    private Spinner mSpInstruments;
-    LinearLayout mLnEdit, mLnPlay;
+    TextView tv, tvSpinnerLegendSE;
+    private Spinner mSpLoops;
+    LinearLayout mLnEdit, mLnPP;
+    ImageView mImPlay, mPlayPause;
+    Button mBtnCreateNewLoop;
+    Loop mLoop;
+    TextView mTvProjectName, mTvNoOfLoopsMeasure, mTvBeatsPerMeasure;
+    String oldProjectName, newProjectName;
+    boolean play = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,21 +114,110 @@ public class SongEditorActivity extends Activity {
         setContentView(R.layout.activity_song_editor);
 
         mLnNotes = (LinearLayout) findViewById(R.id.ln_lytSE);
-        mSpInstruments = (Spinner) findViewById(R.id.sp_instrumentsSE);
+        mSpLoops = (Spinner) findViewById(R.id.sp_instrumentsSE);
         mLnEdit = (LinearLayout) findViewById(R.id.ln_edit);
-        mLnPlay = (LinearLayout) findViewById(R.id.ln_play);
+        mImPlay = (ImageView) findViewById(R.id.im_playPauseSE);
+        mTvProjectName = (TextView) findViewById(R.id.tv_projectName);
+        mTvNoOfLoopsMeasure = (TextView) findViewById(R.id.tv_noLoopMeasureSE);
+        mTvBeatsPerMeasure = (TextView) findViewById(R.id.tv_beatsPerMeausreSE);
+        mLnPP = (LinearLayout) findViewById(R.id.ln_ppSE);
 
         mLnEdit.setBackgroundResource(R.drawable.border_style2);
-        mLnPlay.setBackgroundResource(R.drawable.border_style2);
+        mLnPP.setBackgroundResource(R.drawable.border_style2);
+        mBtnCreateNewLoop = (Button) findViewById(R.id.btn_createNewLoop);
+        tvSpinnerLegendSE = (TextView) findViewById(R.id.tv_spinner_legendSE);
+        mPlayPause = (ImageView) findViewById(R.id.im_playPauseSE);
+
+        mBtnCreateNewLoop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCreateLoopRequest();
+            }
+        });
 
         songEditorNotePlacer();
+        updateSpinner();
 
-        for(Instrument instrumentSp: Instrument.values()){
-            mInstrumentForSpinner.add(instrumentSp.toString());
-        }
+        mTvProjectName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onEditSongNameRequest();
+            }
+        });
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mInstrumentForSpinner);
-        mSpInstruments.setAdapter(adapter);
+        mTvNoOfLoopsMeasure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater layoutInflater = LayoutInflater.from(SongEditorActivity.this);
+                final View numberOfLoopView = layoutInflater.inflate(R.layout.activity_loop_numbers, null);
+                AlertDialog.Builder numLoopDialog = new AlertDialog.Builder(SongEditorActivity.this);
+
+                numLoopDialog.setTitle("Number of loop measures: ");
+                numLoopDialog.setView(numberOfLoopView);
+
+                final EditText edNumLoop = (EditText) numberOfLoopView.findViewById(R.id.ed_loopNumbers);
+
+                numLoopDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton)
+                    {
+                        String loopNumbers = edNumLoop.getText().toString();
+                        mNumberOfMeasures = Integer.parseInt(loopNumbers);
+                        Log.d("TAG", "sudip:" + loopNumbers);
+                        onCreate(null);
+                        mTvNoOfLoopsMeasure.setText("Number of loop \n Measures: " + loopNumbers);
+
+                    }
+                });
+
+                numLoopDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.cancel();
+                    }
+                });
+                numLoopDialog.show();
+            }
+        });
+
+        mTvBeatsPerMeasure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater layoutInflater = LayoutInflater.from(SongEditorActivity.this);
+                final View numberOfLoopView = layoutInflater.inflate(R.layout.activity_loop_numbers, null);
+                AlertDialog.Builder numLoopDialog = new AlertDialog.Builder(SongEditorActivity.this);
+
+                numLoopDialog.setTitle("Beats per measure: ");
+                numLoopDialog.setView(numberOfLoopView);
+
+                final EditText edNumLoop = (EditText) numberOfLoopView.findViewById(R.id.ed_loopNumbers);
+
+                numLoopDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton)
+                    {
+                        String beatPerMeasure = edNumLoop.getText().toString();
+                        mNumberOfBeats = Integer.parseInt(beatPerMeasure);
+                        onCreate(null);
+                        mTvBeatsPerMeasure.setText("Number of loop Measures: " + beatPerMeasure);
+                    }
+                });
+
+                numLoopDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.cancel();
+                    }
+                });
+                numLoopDialog.show();
+            }
+        });
+
+        mPlayPause.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(play) {
+                    onPlayRequest();
+                } else
+                    onPauseRequest();
+            }
+        });
 
     }
 
@@ -98,9 +243,6 @@ public class SongEditorActivity extends Activity {
                 mBeatCount = 1;
                 mMeasureCount++;
             }
-        }
-        for(int i = 0; i < numberOfMeasuresList.size(); i++) {
-            Log.d("TAG", "listMine:" + numberOfMeasuresList.size());
         }
         for(int g = 0; g < 1; g++) {
             gd = new GridLayout(this);
@@ -153,16 +295,42 @@ public class SongEditorActivity extends Activity {
         //repopulateNotePlaced();
     }
     public void onEditClick(View view){
-        Intent loopEditorIntent = new Intent(this, LoopEditorActivity.class);
-        startActivity(loopEditorIntent);
+        onEditLoopRequest(mLoop);
     }
 
     public void tvOnclick(View view){
+        if(mLoop == null)
+            return;
+
         int id = view.getId();
-        Toast.makeText(getApplicationContext(), id + "", Toast.LENGTH_SHORT).show();
-        for(int i = 0; i < 4; i++){
-            gd.getChildAt(id).setBackgroundColor(Color.RED);
-            id++;
+
+        for(int i = 0; i < (mLoop.getNumMeasures() * mLoop.getBeatsPerMeasure()); i++) {
+            for (int j = 0; j < mListForSpinner.size(); j++) {
+                if (mSpLoops.getSelectedItem() == Instrument.values()[j]) {
+                    gd.getChildAt(id).setBackgroundColor(ColorHelper.getColor(j));
+                    id++;
+                }
+            }
         }
+    }
+
+    public void updateSpinner(){
+        if(mSong == null){
+            mListForSpinner.add("<empty>");
+        } else {
+            for (int i = 0; i < mSong.getNumLoops(); i++) {
+                mListForSpinner.add(mSong.getLoop(i).toString());
+            }
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mListForSpinner);
+        mSpLoops.setAdapter(adapter);
+
+
+        for(int i = 0; i < mListForSpinner.size(); i++){
+            if(mSpLoops.getSelectedItem().equals(Instrument.values()[i])){
+                tvSpinnerLegendSE.setBackgroundColor(ColorHelper.getColor(i));
+            }
+        }
+
     }
 }

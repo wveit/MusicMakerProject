@@ -16,25 +16,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Project Name: \n"/>
+            android:text="Project Name: New_Project"/>
         <TextView
             android:id="@+id/tv_noLoopMeasureSE"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Number of Loop\nMeasuers: 5"/>
+            android:text="Number of Loop Measuers: 5"/>
         <TextView
             android:id="@+id/tv_beatsPerMeausreSE"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Beats per\nMeasure: 4"/>
+            android:text="Beats per Measure: 4"/>
         <TextView
             android:id="@+id/tv_rytherZoomLevelSE"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Rhythm Zoom\nLevel: 1"/>
+            android:text="Rhythm Zoom Level: 1"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -42,17 +42,26 @@
             <Spinner
                 android:id="@+id/sp_instrumentsSE"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3">
+                android:layout_height="wrap_content">
             </Spinner>
             <TextView
                 android:id="@+id/tv_spinner_legendSE"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:background="@color/colorAccent"
                 android:layout_toRightOf="@+id/sp_instrumentsSE"
                 android:layout_alignBaseline="@+id/sp_instrumentsSE" />
         </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+            <Button
+                android:id="@+id/btn_createNewLoop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Create New Loop" />
+        </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,15 +87,16 @@
                 android:layout_gravity="center"/>
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/ln_play"
+                android:id="@+id/ln_ppSE"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <ImageView
+                    android:id="@+id/im_playPauseSE"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_play_arrow_black_24px"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_play_arrow_black_24px"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

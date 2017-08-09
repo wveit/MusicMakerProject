@@ -45,10 +45,12 @@ public class LoopEditorActivity extends Activity {
         //this is called when tone is placed by the user
     }
     void onPlayRequest(){
-        Toast.makeText(getApplicationContext(), "Play", Toast.LENGTH_SHORT).show();
+        mPlayPause.setImageResource(R.drawable.ic_pause_black_24px);
+        play = false;
     }
     void onPauseRequest(){
-        Toast.makeText(getApplicationContext(), "Pause", Toast.LENGTH_SHORT).show();
+        mPlayPause.setImageResource(R.drawable.ic_play_arrow_black_24px);
+        play = true;
     }
     void onLoopNameChange(String oldName, String newName){
         Toast.makeText(getApplicationContext(), oldName + "has been changed to " + newName + ".", Toast.LENGTH_SHORT).show();
@@ -67,10 +69,10 @@ public class LoopEditorActivity extends Activity {
 
     private TextView mTvLoopName, mTvNoOfLoopsMeasure, mTvBeatsPerMeasure, mTvRytherZoomLevel;
     private Spinner mSpInstruments;
-    private ImageView mImPlayPause;
+    private ImageView mPlayPause;
     private TextView mTvNotes, mTvInstrumentLegend;
     private boolean play = true;
-    LinearLayout mLnNotes;
+    LinearLayout mLnNotes, mLnPP;
     GridLayout gd;
     private static int mNumberOfMeasures = 5, mNumberOfBeats = 4, mZoomLevel = 1;
     Instrument mInstrument;
@@ -82,7 +84,7 @@ public class LoopEditorActivity extends Activity {
     List<BeatAndMeasure> numberOfMeasuresList;
     List<Tone> tonePlacedByUser = new ArrayList<>();
     List<String> addingViewDescription = new ArrayList<>();
-    List<String> mInstrumentForSpinner = new ArrayList<>();
+    List<String> mInstrumentForSpinner;
 
     TextView tv;
 
@@ -99,6 +101,9 @@ public class LoopEditorActivity extends Activity {
         mSpInstruments = (Spinner) findViewById(R.id.sp_instruments);
         mTvInstrumentLegend = (TextView) findViewById(R.id.tv_spinner_legend);
         mLnNotes = (LinearLayout) findViewById(R.id.ln_lyt);
+        mLnPP = (LinearLayout) findViewById(R.id.ln_ppLE);
+        mLnPP.setBackgroundResource(R.drawable.border_style2);
+        mPlayPause = (ImageView) findViewById(R.id.im_playPauseLE);
 
         onUserInput();
 
@@ -106,6 +111,8 @@ public class LoopEditorActivity extends Activity {
 //        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.instruments, android.R.layout.simple_spinner_dropdown_item);
 //        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 //        mSpInstruments.setAdapter(adapter);
+
+        mInstrumentForSpinner = new ArrayList<>();
 
         for(Instrument instrumentSp: Instrument.values()){
             mInstrumentForSpinner.add(instrumentSp.toString());
@@ -130,7 +137,7 @@ public class LoopEditorActivity extends Activity {
                     public void onClick(DialogInterface dialog, int whichButton)
                     {
                         newFileName = edFileName.getText().toString();
-                        mTvLoopName.setText("Loop Name: \n" + newFileName);
+                        mTvLoopName.setText("Loop Name: " + newFileName);
                         onLoopNameChange(oldFileName, newFileName);
                     }
                 });
@@ -161,8 +168,10 @@ public class LoopEditorActivity extends Activity {
                     {
                         String loopNumbers = edNumLoop.getText().toString();
                         mNumberOfMeasures = Integer.parseInt(loopNumbers);
-                        mTvNoOfLoopsMeasure.setText("Number of loop \n Measures: \n" + loopNumbers);
+                        Log.d("TAG", "sudip:" + loopNumbers);
                         onCreate(null);
+                        mTvNoOfLoopsMeasure.setText("Number of loop \n Measures: " + loopNumbers);
+
                     }
                 });
 
@@ -192,8 +201,8 @@ public class LoopEditorActivity extends Activity {
                     {
                         String beatPerMeasure = edNumLoop.getText().toString();
                         mNumberOfBeats = Integer.parseInt(beatPerMeasure);
-                        mTvBeatsPerMeasure.setText("Number of loop \n Measures: \n" + beatPerMeasure);
                         onCreate(null);
+                        mTvBeatsPerMeasure.setText("Number of loop \n Measures: " + beatPerMeasure);
                     }
                 });
 
@@ -209,21 +218,36 @@ public class LoopEditorActivity extends Activity {
         mSpInstruments.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(mSpInstruments.getSelectedItem().toString().equals(Instrument.TELEPHONE.toString())){
-                    mTvInstrumentLegend.setBackgroundColor(Color.RED);
-                    newInstrument = Instrument.TELEPHONE;
-                } else if(mSpInstruments.getSelectedItem().toString().equals(Instrument.PIANO.toString())){
-                    mTvInstrumentLegend.setBackgroundColor(Color.BLUE);
-                    newInstrument = Instrument.PIANO;
-                } else if(mSpInstruments.getSelectedItem().toString().equals(Instrument.TRUMPET.toString())){
-                    mTvInstrumentLegend.setBackgroundColor(Color.BLACK);
-                    newInstrument = Instrument.TRUMPET;
+
+                for(int index = 0; index < mInstrumentForSpinner.size(); index++){
+                    if(mSpInstruments.getSelectedItem().toString().equals(Instrument.values()[index].toString())){
+                        mTvInstrumentLegend.setBackgroundColor(ColorHelper.getColor(index));
+                    }
                 }
+//                if(mSpInstruments.getSelectedItem().toString().equals(Instrument.TELEPHONE.toString())){
+//                    mTvInstrumentLegend.setBackgroundColor(Color.RED);
+//                    newInstrument = Instrument.TELEPHONE;
+//                } else if(mSpInstruments.getSelectedItem().toString().equals(Instrument.PIANO.toString())){
+//                    mTvInstrumentLegend.setBackgroundColor(Color.BLUE);
+//                    newInstrument = Instrument.PIANO;
+//                } else if(mSpInstruments.getSelectedItem().toString().equals(Instrument.TRUMPET.toString())){
+//                    mTvInstrumentLegend.setBackgroundColor(Color.BLACK);
+//                    newInstrument = Instrument.TRUMPET;
+//                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+        mPlayPause.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(play) {
+                    onPlayRequest();
+                } else
+                    onPauseRequest();
             }
         });
         onChangeInstrument(oldInstrument, newInstrument);
@@ -232,22 +256,22 @@ public class LoopEditorActivity extends Activity {
 
 
 
-    public void togglePlayPause(View view){
-        final ImageView playPause = (ImageView) findViewById(R.id.im_playPause);
-        playPause.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (play) {
-                    playPause.setImageResource(R.drawable.ic_pause_circle_filled_black_24px);
-                    play = false;
-                    onPauseRequest();
-                } else {
-                    playPause.setImageResource(R.drawable.ic_play_circle_filled_black_24px);
-                    play = true;
-                    onPlayRequest();
-                }
-            }
-        });
-    }
+//    public void togglePlayPause(View view){
+//        final ImageView playPause = (ImageView) findViewById(R.id.im_playPauseLE);
+//        playPause.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                if (play) {
+//                    playPause.setImageResource(R.drawable.ic_pause_black_24px);
+//                    play = false;
+//                    onPauseRequest();
+//                } else {
+//                    playPause.setImageResource(R.drawable.ic_play_arrow_black_24px);
+//                    play = true;
+//                    onPlayRequest();
+//                }
+//            }
+//        });
+//    }
 
     public void onUserInput() {
 
@@ -347,16 +371,22 @@ public class LoopEditorActivity extends Activity {
         ColorDrawable col = (ColorDrawable) view.getBackground();
         int colorCode = col.getColor();
         if (colorCode == getColor(R.color.buttonColor)) {
-            if (mSpInstruments.getSelectedItem().toString().equals(Instrument.TELEPHONE.toString())) {
-                view.setBackgroundColor(Color.RED);
-                instrument = Instrument.TELEPHONE.toString();
-            } else if (mSpInstruments.getSelectedItem().toString().equals(Instrument.PIANO.toString())) {
-                view.setBackgroundColor(Color.BLUE);
-                instrument = Instrument.PIANO.toString();
-            } else if (mSpInstruments.getSelectedItem().toString().equals(Instrument.TRUMPET.toString())) {
-                view.setBackgroundColor(Color.BLACK);
-                instrument = Instrument.TRUMPET.toString();
+            for(int i = 0; i < Instrument.values().length; i++) {
+                if (mSpInstruments.getSelectedItem().toString().equals(Instrument.values()[i].toString())) {
+                    view.setBackgroundColor(ColorHelper.getColor(i));
+                    instrument = Instrument.values()[i].toString();
+                }
             }
+//            if (mSpInstruments.getSelectedItem().toString().equals(Instrument.TELEPHONE.toString())) {
+//                view.setBackgroundColor(Color.RED);
+//                instrument = Instrument.TELEPHONE.toString();
+//            } else if (mSpInstruments.getSelectedItem().toString().equals(Instrument.PIANO.toString())) {
+//                view.setBackgroundColor(Color.BLUE);
+//                instrument = Instrument.PIANO.toString();
+//            } else if (mSpInstruments.getSelectedItem().toString().equals(Instrument.TRUMPET.toString())) {
+//                view.setBackgroundColor(Color.BLACK);
+//                instrument = Instrument.TRUMPET.toString();
+//            }
         } else {
             view.setBackgroundColor(getColor(R.color.buttonColor));
         }
@@ -382,6 +412,8 @@ public class LoopEditorActivity extends Activity {
         Toast.makeText(getApplicationContext(), completeToneString, Toast.LENGTH_SHORT).show();
         tonePlacedByUser.add(new Tone(mNote, mInstrument, Integer.parseInt(splitViewDescription[1]), Integer.parseInt(splitViewDescription[2]), 1));
     }
+
+
     public void repopulateNotePlaced(){
         if(tonePlacedByUser.size() > 0) {
             for (int i = 0; i < (gd.getColumnCount() * gd.getRowCount()); i++) {
@@ -390,15 +422,20 @@ public class LoopEditorActivity extends Activity {
                             + "-" + tonePlacedByUser.get(j).getStartBeat() + "-" + tonePlacedByUser.get(j).getLengthInBeats();
                     Log.d("TAG", "gd:" + comparingTobePlacedToLoop);
                     if (gd.getChildAt(i).getContentDescription().equals(comparingTobePlacedToLoop)) {
-                        if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.TELEPHONE)) {
-                            gd.getChildAt(i).setBackgroundColor(Color.RED);
+                        for(int indexInner = 0; indexInner < Instrument.values().length; indexInner++){
+                            if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.values()[indexInner])) {
+                                gd.getChildAt(i).setBackgroundColor(ColorHelper.getColor(indexInner));
+                            }
                         }
-                        if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.PIANO)) {
-                            gd.getChildAt(i).setBackgroundColor(Color.BLUE);
-                        }
-                        if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.TRUMPET)) {
-                            gd.getChildAt(i).setBackgroundColor(Color.BLACK);
-                        }
+//                        if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.TELEPHONE)) {
+//                            gd.getChildAt(i).setBackgroundColor(Color.RED);
+//                        }
+//                        if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.PIANO)) {
+//                            gd.getChildAt(i).setBackgroundColor(Color.BLUE);
+//                        }
+//                        if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.TRUMPET)) {
+//                            gd.getChildAt(i).setBackgroundColor(Color.BLACK);
+//                        }
 
                     }
                 }

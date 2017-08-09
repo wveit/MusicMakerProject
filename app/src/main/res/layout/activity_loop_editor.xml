@@ -10,42 +10,55 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@color/menuBackground"
-        android:padding="15dp">
+        android:padding="15dp" >
         <TextView
             android:id="@+id/tv_loopName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Loop Name: \n"/>
+            android:layout_weight=".5"
+            android:text="Loop Name: "/>
         <TextView
             android:id="@+id/tv_noLoopMeasure"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Number of Loop\nMeasuers: 5"/>
+            android:layout_weight=".5"
+            android:text="Number of Loop Measuers: 5"/>
         <TextView
             android:id="@+id/tv_beatsPerMeausre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Beats per\nMeasure: 4"/>
+            android:layout_weight=".5"
+            android:text="Beats per Measure: 4"/>
         <TextView
             android:id="@+id/tv_rytherZoomLevel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Rhythm Zoom\nLevel: 1"/>
-        <ImageView
-            android:id="@+id/im_playPause"
+            android:layout_weight=".5"
+            android:text="Rhythm Zoom Level: 1"/>
+        <LinearLayout
+            android:id="@+id/ln_ppLE"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_play_circle_filled_black_24px"
+            android:orientation="vertical"
             android:layout_gravity="center"
-            android:onClick="togglePlayPause"/>
+            android:layout_marginBottom="15dp">
+            <ImageView
+                android:id="@+id/im_playPauseLE"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_play_arrow_black_24px"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Play"
+                android:layout_gravity="center"/>
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
             <Spinner
                 android:id="@+id/sp_instruments"
                 android:layout_width="wrap_content"
