@@ -54,28 +54,33 @@ public class SongEditorActivity extends Activity {
     private Song mSong = null;
 
     // These methods are called in response to a user action
-    void onLoopPlacement(Loop loop, int startMeasure, int startBeat){
+    void onLoopPlacement(Loop loop, int startMeasure, int startBeat) {
 
     }
-    void onPlayRequest(){
+
+    void onPlayRequest() {
         mPlayPause.setImageResource(R.drawable.ic_pause_black_24px);
         play = false;
     }
-    void onPauseRequest(){
+
+    void onPauseRequest() {
         mPlayPause.setImageResource(R.drawable.ic_play_arrow_black_24px);
         play = true;
 
     }
-    void onEditLoopRequest(Loop loop){
+
+    void onEditLoopRequest(Loop loop) {
         Intent loopEditorIntent = new Intent(this, LoopEditorActivity.class);
         startActivity(loopEditorIntent);
 
     }
-    void onCreateLoopRequest(){
+
+    void onCreateLoopRequest() {
         Intent intent = new Intent(SongEditorActivity.this, LoopEditorActivity.class);
         startActivity(intent);
     }
-    void onEditSongNameRequest(){
+
+    void onEditSongNameRequest() {
         LayoutInflater layoutInflater = LayoutInflater.from(SongEditorActivity.this);
         final View newFileView = layoutInflater.inflate(R.layout.activity_new_filename, null);
         AlertDialog.Builder newFileDialog = new AlertDialog.Builder(SongEditorActivity.this);
@@ -86,8 +91,7 @@ public class SongEditorActivity extends Activity {
         final EditText edFileName = (EditText) newFileView.findViewById(R.id.ed_filename);
 
         newFileDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton)
-            {
+            public void onClick(DialogInterface dialog, int whichButton) {
                 newProjectName = edFileName.getText().toString();
                 mTvProjectName.setText("Project Name: " + newProjectName);
             }
@@ -100,12 +104,18 @@ public class SongEditorActivity extends Activity {
         });
         newFileDialog.show();
     }
-    void onExportSongRequest(){}
-    void onTempoChange(int newTempo){}
-    void onVolumeChange(int newVolume){}
+
+    void onExportSongRequest() {
+    }
+
+    void onTempoChange(int newTempo) {
+    }
+
+    void onVolumeChange(int newVolume) {
+    }
 
     // These methods control the activity
-    void setSong(Song song){
+    void setSong(Song song) {
         mSong = song;
     }
 
@@ -160,8 +170,7 @@ public class SongEditorActivity extends Activity {
                 final EditText edNumLoop = (EditText) numberOfLoopView.findViewById(R.id.ed_loopNumbers);
 
                 numLoopDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton)
-                    {
+                    public void onClick(DialogInterface dialog, int whichButton) {
                         String loopNumbers = edNumLoop.getText().toString();
                         mNumberOfMeasures = Integer.parseInt(loopNumbers);
                         Log.d("TAG", "sudip:" + loopNumbers);
@@ -193,8 +202,7 @@ public class SongEditorActivity extends Activity {
                 final EditText edNumLoop = (EditText) numberOfLoopView.findViewById(R.id.ed_loopNumbers);
 
                 numLoopDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton)
-                    {
+                    public void onClick(DialogInterface dialog, int whichButton) {
                         String beatPerMeasure = edNumLoop.getText().toString();
                         mNumberOfBeats = Integer.parseInt(beatPerMeasure);
                         onCreate(null);
@@ -211,10 +219,10 @@ public class SongEditorActivity extends Activity {
             }
         });
 
-        mPlayPause.setOnClickListener(new View.OnClickListener(){
+        mPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(play) {
+                if (play) {
                     onPlayRequest();
                 } else
                     onPauseRequest();
@@ -233,20 +241,20 @@ public class SongEditorActivity extends Activity {
         numberOfMeasuresList = new ArrayList<>();
         ArrayList<String> notesArray = new ArrayList<>();
 
-        for(Note noteString: Note.values()){
+        for (Note noteString : Note.values()) {
             notesArray.add(noteString.niceString());
         }
 
-        for(int i = 0; i < (mNumberOfMeasures * mNumberOfBeats + mNumberOfBeats); i++){
-            if(mBeatCount <= mNumberOfBeats){
+        for (int i = 0; i < (mNumberOfMeasures * mNumberOfBeats + mNumberOfBeats); i++) {
+            if (mBeatCount <= mNumberOfBeats) {
                 numberOfMeasuresList.add(new BeatAndMeasure(mBeatCount, mMeasureCount));
                 mBeatCount++;
-            } else{
+            } else {
                 mBeatCount = 1;
                 mMeasureCount++;
             }
         }
-        for(int g = 0; g < 1; g++) {
+        for (int g = 0; g < 1; g++) {
             gd = new GridLayout(this);
             gd.setColumnCount(mNumberOfMeasures * mNumberOfBeats);
             gd.setRowCount(notesArray.size());
@@ -258,8 +266,8 @@ public class SongEditorActivity extends Activity {
                 tv.setWidth(80);
                 tv.setId(i);
 
-              if (tv.getId() < (mNumberOfMeasures * mNumberOfBeats) && i < numberOfMeasuresList.size()) {
-                    if(printMeasureNumber){
+                if (tv.getId() < (mNumberOfMeasures * mNumberOfBeats) && i < numberOfMeasuresList.size()) {
+                    if (printMeasureNumber) {
                         tv.setText(String.valueOf(numberOfMeasuresList.get(i).getMeausre()));
                         tv.setBackgroundResource(R.drawable.measure_border);
                         tv.setTextColor(Color.RED);
@@ -269,7 +277,7 @@ public class SongEditorActivity extends Activity {
                         tv.setText(String.valueOf(numberOfMeasuresList.get(i).getBeat()));
                         tv.setBackgroundResource(R.drawable.beat_border);
                         nextMeasurePrint++;
-                        if(nextMeasurePrint == (mNumberOfBeats - 1)){
+                        if (nextMeasurePrint == (mNumberOfBeats - 1)) {
                             printMeasureNumber = true;
                         }
                     }
@@ -296,17 +304,18 @@ public class SongEditorActivity extends Activity {
         }
         //repopulateNotePlaced();
     }
-    public void onEditClick(View view){
+
+    public void onEditClick(View view) {
         onEditLoopRequest(mLoop);
     }
 
-    public void tvOnclick(View view){
-        if(mLoop == null)
+    public void tvOnclick(View view) {
+        if (mLoop == null)
             return;
 
         int id = view.getId();
 
-        for(int i = 0; i < (mLoop.getNumMeasures() * mLoop.getBeatsPerMeasure()); i++) {
+        for (int i = 0; i < (mLoop.getNumMeasures() * mLoop.getBeatsPerMeasure()); i++) {
             for (int j = 0; j < mListForSpinner.size(); j++) {
                 if (mSpLoops.getSelectedItem() == Instrument.values()[j]) {
                     gd.getChildAt(id).setBackgroundColor(ColorHelper.getColor(j));
@@ -316,8 +325,8 @@ public class SongEditorActivity extends Activity {
         }
     }
 
-    public void updateSpinner(){
-        if(mSong == null){
+    public void updateSpinner() {
+        if (mSong == null) {
             mTvEmpty.setVisibility(View.VISIBLE);
             return;
         } else {
@@ -330,11 +339,12 @@ public class SongEditorActivity extends Activity {
         mSpLoops.setAdapter(adapter);
 
 
-        for(int i = 0; i < mListForSpinner.size(); i++){
-            if(mSpLoops.getSelectedItem().equals(Instrument.values()[i])){
+        for (int i = 0; i < mListForSpinner.size(); i++) {
+            if (mSpLoops.getSelectedItem().equals(Instrument.values()[i])) {
                 tvSpinnerLegendSE.setBackgroundColor(ColorHelper.getColor(i));
             }
         }
 
     }
 }
+
