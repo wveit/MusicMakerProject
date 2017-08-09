@@ -24,13 +24,17 @@ public enum Note {
         String niceString = "";
 
         if (badString.charAt(2) == 'S')
-            niceString = badString.charAt(0) + "#";
+            niceString = badString.charAt(0) + "\u266F " + octaveNumber();
         else if (badString.charAt(2) == 'F')
-            niceString = badString.charAt(0) + "b";
+            niceString = badString.charAt(0) + "\u266D " + octaveNumber();
         else
-            niceString = badString.charAt(0) + "";
+            niceString = badString.charAt(0) + "  " + octaveNumber();
 
         return niceString;
+    }
+
+    public int octaveNumber(){
+        return ordinal() / 12 + 3;
     }
 
 }

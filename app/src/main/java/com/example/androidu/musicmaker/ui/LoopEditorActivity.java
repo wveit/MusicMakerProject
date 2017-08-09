@@ -38,8 +38,6 @@ import java.util.Set;
 
 public class LoopEditorActivity extends Activity {
 
-
-
     // These methods are called in response to a user action
     void onTonePlacement(Tone newTone){
         //this is called when tone is placed by the user
@@ -411,6 +409,7 @@ public class LoopEditorActivity extends Activity {
         }
         Toast.makeText(getApplicationContext(), completeToneString, Toast.LENGTH_SHORT).show();
         tonePlacedByUser.add(new Tone(mNote, mInstrument, Integer.parseInt(splitViewDescription[1]), Integer.parseInt(splitViewDescription[2]), 1));
+        onTonePlacement(new Tone(mNote, mInstrument, Integer.parseInt(splitViewDescription[1]), Integer.parseInt(splitViewDescription[2]), 1));
     }
 
 
