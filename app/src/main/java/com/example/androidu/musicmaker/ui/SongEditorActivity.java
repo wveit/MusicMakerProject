@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -35,6 +36,21 @@ import java.util.List;
 
 public class SongEditorActivity extends Activity {
 
+    List<BeatAndMeasure> numberOfMeasuresList;
+    List<String> mListForSpinner = new ArrayList<>();
+    private static int mNumberOfMeasures = 5, mNumberOfBeats = 4, mZoomLevel = 1;
+    GridLayout gd;
+    LinearLayout mLnNotes;
+    TextView tv, tvSpinnerLegendSE;
+    private Spinner mSpLoops;
+    LinearLayout mLnEdit, mLnPP;
+    ImageView mImPlay, mPlayPause;
+    Button mBtnCreateNewLoop;
+    Loop mLoop;
+    TextView mTvProjectName, mTvNoOfLoopsMeasure, mTvBeatsPerMeasure, mTvEmpty;
+    String oldProjectName, newProjectName;
+    boolean play = true;
+
     private Song mSong = null;
 
     // These methods are called in response to a user action
@@ -64,7 +80,7 @@ public class SongEditorActivity extends Activity {
         final View newFileView = layoutInflater.inflate(R.layout.activity_new_filename, null);
         AlertDialog.Builder newFileDialog = new AlertDialog.Builder(SongEditorActivity.this);
 
-        newFileDialog.setTitle("Name of the file: ");
+        newFileDialog.setTitle("Project Name: ");
         newFileDialog.setView(newFileView);
 
         final EditText edFileName = (EditText) newFileView.findViewById(R.id.ed_filename);
@@ -73,7 +89,7 @@ public class SongEditorActivity extends Activity {
             public void onClick(DialogInterface dialog, int whichButton)
             {
                 newProjectName = edFileName.getText().toString();
-                mTvProjectName.setText("Loop Name: \n" + newProjectName);
+                mTvProjectName.setText("Project Name: " + newProjectName);
             }
         });
 
@@ -92,21 +108,6 @@ public class SongEditorActivity extends Activity {
     void setSong(Song song){
         mSong = song;
     }
-
-    List<BeatAndMeasure> numberOfMeasuresList;
-    List<String> mListForSpinner = new ArrayList<>();
-    private static int mNumberOfMeasures = 5, mNumberOfBeats = 4, mZoomLevel = 1;
-    GridLayout gd;
-    LinearLayout mLnNotes;
-    TextView tv, tvSpinnerLegendSE;
-    private Spinner mSpLoops;
-    LinearLayout mLnEdit, mLnPP;
-    ImageView mImPlay, mPlayPause;
-    Button mBtnCreateNewLoop;
-    Loop mLoop;
-    TextView mTvProjectName, mTvNoOfLoopsMeasure, mTvBeatsPerMeasure;
-    String oldProjectName, newProjectName;
-    boolean play = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +128,7 @@ public class SongEditorActivity extends Activity {
         mBtnCreateNewLoop = (Button) findViewById(R.id.btn_createNewLoop);
         tvSpinnerLegendSE = (TextView) findViewById(R.id.tv_spinner_legendSE);
         mPlayPause = (ImageView) findViewById(R.id.im_playPauseSE);
+        mTvEmpty = (TextView) findViewById(R.id.tv_empty);
 
         mBtnCreateNewLoop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,7 +166,7 @@ public class SongEditorActivity extends Activity {
                         mNumberOfMeasures = Integer.parseInt(loopNumbers);
                         Log.d("TAG", "sudip:" + loopNumbers);
                         onCreate(null);
-                        mTvNoOfLoopsMeasure.setText("Number of loop \n Measures: " + loopNumbers);
+                        mTvNoOfLoopsMeasure.setText("Number of loop Measures: " + loopNumbers);
 
                     }
                 });
@@ -196,7 +198,7 @@ public class SongEditorActivity extends Activity {
                         String beatPerMeasure = edNumLoop.getText().toString();
                         mNumberOfBeats = Integer.parseInt(beatPerMeasure);
                         onCreate(null);
-                        mTvBeatsPerMeasure.setText("Number of loop Measures: " + beatPerMeasure);
+                        mTvBeatsPerMeasure.setText("Beats per measure: " + beatPerMeasure);
                     }
                 });
 
@@ -256,7 +258,7 @@ public class SongEditorActivity extends Activity {
                 tv.setWidth(80);
                 tv.setId(i);
 
-              if (tv.getId() < (mNumberOfMeasures * mNumberOfBeats)) {
+              if (tv.getId() < (mNumberOfMeasures * mNumberOfBeats) && i < numberOfMeasuresList.size()) {
                     if(printMeasureNumber){
                         tv.setText(String.valueOf(numberOfMeasuresList.get(i).getMeausre()));
                         tv.setBackgroundResource(R.drawable.measure_border);
@@ -316,8 +318,10 @@ public class SongEditorActivity extends Activity {
 
     public void updateSpinner(){
         if(mSong == null){
-            mListForSpinner.add("<empty>");
+            mTvEmpty.setVisibility(View.VISIBLE);
+            return;
         } else {
+            mTvEmpty.setVisibility(View.INVISIBLE);
             for (int i = 0; i < mSong.getNumLoops(); i++) {
                 mListForSpinner.add(mSong.getLoop(i).toString());
             }

@@ -31,39 +31,9 @@ import com.example.androidu.musicmaker.model.Note;
 import com.example.androidu.musicmaker.model.Tone;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 public class LoopEditorActivity extends Activity {
-
-    // These methods are called in response to a user action
-    void onTonePlacement(Tone newTone){
-        //this is called when tone is placed by the user
-    }
-    void onPlayRequest(){
-        mPlayPause.setImageResource(R.drawable.ic_pause_black_24px);
-        play = false;
-    }
-    void onPauseRequest(){
-        mPlayPause.setImageResource(R.drawable.ic_play_arrow_black_24px);
-        play = true;
-    }
-    void onLoopNameChange(String oldName, String newName){
-        Toast.makeText(getApplicationContext(), oldName + "has been changed to " + newName + ".", Toast.LENGTH_SHORT).show();
-    } // <--- figure this one out
-    void onChangeInstrument(Instrument oldInstrument, Instrument newInstrument){
-        oldInstrument = newInstrument;
-    } // <--- this may not be necessary
-    void onChangeNumberOfLoopMeasures(int oldNumLoopMeasures, int newNumLoopMeasures){
-
-    }
-    void onNoteScroll(Note oldLowNote, Note oldHighNote, Note newLowNote, Note newHighNote){} // <--- this may not be necessary
-    void onMeasureScroll(int oldBeginMeasure, int oldEndMeasure, int newBeginMeasure, int newEndMeasure){} // <--- this may not be necessary
-
-    // These methods are used to control the activity
-    void setLoop(Loop loop){}
 
     private TextView mTvLoopName, mTvNoOfLoopsMeasure, mTvBeatsPerMeasure, mTvRytherZoomLevel;
     private Spinner mSpInstruments;
@@ -85,6 +55,34 @@ public class LoopEditorActivity extends Activity {
     List<String> mInstrumentForSpinner;
 
     TextView tv;
+
+    // These methods are called in response to a user action
+    void onTonePlacement(Tone newTone){
+        //this is called when tone is placed by the user
+    }
+    void onPlayRequest(){
+        mPlayPause.setImageResource(R.drawable.ic_pause_black_24px);
+        play = false;
+    }
+    void onPauseRequest(){
+        mPlayPause.setImageResource(R.drawable.ic_play_arrow_black_24px);
+        play = true;
+    }
+    void onLoopNameChange(String oldName, String newName){
+        Toast.makeText(getApplicationContext(), oldName + " has been changed to " + newName + ".", Toast.LENGTH_SHORT).show();
+        oldFileName = newName;
+    } // <--- figure this one out
+    void onChangeInstrument(Instrument oldInstrument, Instrument newInstrument){
+        oldInstrument = newInstrument;
+    } // <--- this may not be necessary
+    void onChangeNumberOfLoopMeasures(int oldNumLoopMeasures, int newNumLoopMeasures){
+
+    }
+    void onNoteScroll(Note oldLowNote, Note oldHighNote, Note newLowNote, Note newHighNote){} // <--- this may not be necessary
+    void onMeasureScroll(int oldBeginMeasure, int oldEndMeasure, int newBeginMeasure, int newEndMeasure){} // <--- this may not be necessary
+
+    // These methods are used to control the activity
+    void setLoop(Loop loop){}
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -168,7 +166,7 @@ public class LoopEditorActivity extends Activity {
                         mNumberOfMeasures = Integer.parseInt(loopNumbers);
                         Log.d("TAG", "sudip:" + loopNumbers);
                         onCreate(null);
-                        mTvNoOfLoopsMeasure.setText("Number of loop \n Measures: " + loopNumbers);
+                        mTvNoOfLoopsMeasure.setText("Number of loop Measures: " + loopNumbers);
 
                     }
                 });
@@ -200,7 +198,7 @@ public class LoopEditorActivity extends Activity {
                         String beatPerMeasure = edNumLoop.getText().toString();
                         mNumberOfBeats = Integer.parseInt(beatPerMeasure);
                         onCreate(null);
-                        mTvBeatsPerMeasure.setText("Number of loop \n Measures: " + beatPerMeasure);
+                        mTvBeatsPerMeasure.setText("Beats per measure: " + beatPerMeasure);
                     }
                 });
 

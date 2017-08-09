@@ -39,10 +39,17 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="empty"
+                android:layout_toLeftOf="@+id/tv_spinner_legend"/>
             <Spinner
                 android:id="@+id/sp_instrumentsSE"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/tv_empty">
             </Spinner>
             <TextView
                 android:id="@+id/tv_spinner_legendSE"
