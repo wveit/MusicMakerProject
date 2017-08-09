@@ -13,14 +13,15 @@ import com.example.androidu.musicmaker.model.Song;
  */
 
 public class fileSaveActivityTest extends AppCompatActivity {
-    public Song lol = TestSongs.twinkleHarmony();
-    public Song lol2 = new Song(10, 4);
+    public Song lol = TestSongs.reverie();
+    public Song lol2 = new Song(20, 4);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SaverLoader.save(lol,"lol.txt", this);
         SaverLoader.load(lol2,"lol.txt", this);
+        SaverLoader.save(lol2, "lol.txt", this);
     }
 
 

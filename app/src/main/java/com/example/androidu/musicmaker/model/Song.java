@@ -6,7 +6,12 @@ import java.util.ArrayList;
 public class Song {
     private int mNumMeasures;
     private int mBeatsPerMeasure;
-    private int loopID = 0;
+
+    private int mloopID = 0;
+
+    public int getLoopID(){
+        return mloopID;
+    }
 
     private ArrayList<Loop> mLoopList = new ArrayList<Loop>();
 
@@ -27,10 +32,18 @@ public class Song {
         return mBeatsPerMeasure;
     }
 
+    public void setNumMeasures(int mNumMeasures) {
+        this.mNumMeasures = mNumMeasures;
+    }
+
+    public void setBeatsPerMeasure(int mBeatsPerMeasure) {
+        this.mBeatsPerMeasure = mBeatsPerMeasure;
+    }
+
     public void addLoop(Loop loop){
         mLoopList.add(loop);
-        loop.setId(loopID);
-        loopID++;
+        loop.setId(mloopID);
+        mloopID++;
     }
 
     public int getNumLoops(){
@@ -84,6 +97,14 @@ public class Song {
     public ArrayList<Loop> getmLoopList() {
         return mLoopList;
     }
+
+//    public ArrayList<Integer> getmPlacedLoopListOnlyIds() {
+//        ArrayList<Integer> ids = new ArrayList<>();
+//        for(int i = 0; i < mPlacedLoopList.size(); i++) {
+//            ids.add(mPlacedLoopList.get(i).getLoop().getId());
+//        }
+//        return ids;
+//    }
 
     public ArrayList<PlacedLoop> getmPlacedLoopList() {
         return mPlacedLoopList;
