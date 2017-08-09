@@ -6,8 +6,8 @@ import java.util.ArrayList;
 public class Song {
     private int mNumMeasures;
     private int mBeatsPerMeasure;
-    private int loopID = 0;
     private String mName = "";
+
 
     private ArrayList<Loop> mLoopList = new ArrayList<Loop>();
 
@@ -46,8 +46,8 @@ public class Song {
 
     public void addLoop(Loop loop){
         mLoopList.add(loop);
-        loop.setId(loopID);
-        loopID++;
+        loop.setId(mloopID);
+        mloopID++;
     }
 
     public int getNumLoops(){
@@ -112,6 +112,18 @@ public class Song {
 
     public int getTempo(){
         return mTempo;
+    }
+
+
+    /////////////////////
+    //
+    //  This mLoopId stuff is so that when a new loop is added, it can have an auto
+    //     generated id
+    //
+    ////////////////////
+    private int mloopID = 0;
+    public int getLoopID(){
+        return mloopID;
     }
 
 }
