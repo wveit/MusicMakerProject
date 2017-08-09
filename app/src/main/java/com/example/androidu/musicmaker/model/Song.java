@@ -7,6 +7,7 @@ public class Song {
     private int mNumMeasures;
     private int mBeatsPerMeasure;
     private int loopID = 0;
+    private String mName = "";
 
     private ArrayList<Loop> mLoopList = new ArrayList<Loop>();
 
@@ -19,12 +20,28 @@ public class Song {
         this.mBeatsPerMeasure = beatsPerMeasure;
     }
 
+    public String getName(){
+        return mName;
+    }
+
+    public void setName(String name){
+        mName = name;
+    }
+
     public int getNumMeasures(){
         return mNumMeasures;
     }
 
+    public void setNumMeasures(int numMeasures){
+        mNumMeasures = numMeasures;
+    }
+
     public int getBeatsPerMeasure(){
         return mBeatsPerMeasure;
+    }
+
+    public void setBeatsPerMeasure(int bpm){
+        mBeatsPerMeasure = bpm;
     }
 
     public void addLoop(Loop loop){

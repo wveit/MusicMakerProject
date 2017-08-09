@@ -5,9 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
+
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="3"
         android:layout_height="match_parent"
         android:background="@color/menuBackground"
         android:padding="15dp">
@@ -75,11 +77,13 @@
                 android:orientation="vertical"
                 android:layout_marginRight="15dp"
                 android:onClick="onEditClick">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_insert_drive_file_black_24px"
-                android:layout_gravity="center"/>
+
+                <ImageView
+                    android:id="@+id/im_edit_loop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_insert_drive_file_black_24px" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,20 +111,24 @@
 
     </LinearLayout>
 
-    <HorizontalScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:id="@+id/ln_lytSE"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="510dp"
-                android:orientation="horizontal">
-            </LinearLayout>
-        </ScrollView>
-    </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="7"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.example.androidu.musicmaker.ui.RectangleDragView
+            android:layout_width="500dp"
+            android:layout_height="0dp"
+            android:layout_weight="9"
+            android:id="@+id/rect_drag_view"/>
+
+    </LinearLayout>
+
 </LinearLayout>

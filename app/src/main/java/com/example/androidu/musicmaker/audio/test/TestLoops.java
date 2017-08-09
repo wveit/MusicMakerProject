@@ -34,6 +34,7 @@ public class TestLoops {
 
     public static Loop reverieLoop1(){
         Loop loop = new Loop(4, 4);
+        loop.setName("reverie loop 1");
 
         Instrument instrument = Instrument.PIANO;
         loop.addTone(new Tone(Note.B_FLAT_3, instrument, 1, 1, 1));
@@ -55,6 +56,7 @@ public class TestLoops {
 
     public static Loop reverieLoop2(){
         Loop loop = new Loop(6, 4);
+        loop.setName("reverie loop 2");
 
         Instrument instrument = Instrument.PIANO;
         loop.addTone(new Tone(Note.A_3, instrument, 1, 1, 1));
@@ -82,6 +84,7 @@ public class TestLoops {
 
     public static Loop reverieLoop3(){
         Loop loop = new Loop(16, 4);
+        loop.setName("reverie loop 3");
 
         Instrument instrument = Instrument.VIOLIN;
         loop.addTone(new Tone(Note.G_5, instrument, 1, 1, 4));

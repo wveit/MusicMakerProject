@@ -31,10 +31,7 @@ import com.example.androidu.musicmaker.model.Note;
 import com.example.androidu.musicmaker.model.Tone;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 public class LoopEditorActivity extends Activity {
 
@@ -258,13 +255,13 @@ public class LoopEditorActivity extends Activity {
 //        final ImageView playPause = (ImageView) findViewById(R.id.im_playPauseLE);
 //        playPause.setOnClickListener(new View.OnClickListener() {
 //            public void onClick(View v) {
-//                if (play) {
+//                if (mPlayPauseImageIsPlay) {
 //                    playPause.setImageResource(R.drawable.ic_pause_black_24px);
-//                    play = false;
+//                    mPlayPauseImageIsPlay = false;
 //                    onPauseRequest();
 //                } else {
 //                    playPause.setImageResource(R.drawable.ic_play_arrow_black_24px);
-//                    play = true;
+//                    mPlayPauseImageIsPlay = true;
 //                    onPlayRequest();
 //                }
 //            }
@@ -419,7 +416,7 @@ public class LoopEditorActivity extends Activity {
                 for (int j = 0; j < tonePlacedByUser.size(); j++) {
                     String comparingTobePlacedToLoop = tonePlacedByUser.get(j).getNote().niceString() + "-" + tonePlacedByUser.get(j).getStartMeasure()
                             + "-" + tonePlacedByUser.get(j).getStartBeat() + "-" + tonePlacedByUser.get(j).getLengthInBeats();
-                    Log.d("TAG", "gd:" + comparingTobePlacedToLoop);
+                    Log.d("TAG", "mGridLayout:" + comparingTobePlacedToLoop);
                     if (gd.getChildAt(i).getContentDescription().equals(comparingTobePlacedToLoop)) {
                         for(int indexInner = 0; indexInner < Instrument.values().length; indexInner++){
                             if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.values()[indexInner])) {
@@ -427,13 +424,13 @@ public class LoopEditorActivity extends Activity {
                             }
                         }
 //                        if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.TELEPHONE)) {
-//                            gd.getChildAt(i).setBackgroundColor(Color.RED);
+//                            mGridLayout.getChildAt(i).setBackgroundColor(Color.RED);
 //                        }
 //                        if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.PIANO)) {
-//                            gd.getChildAt(i).setBackgroundColor(Color.BLUE);
+//                            mGridLayout.getChildAt(i).setBackgroundColor(Color.BLUE);
 //                        }
 //                        if (tonePlacedByUser.get(j).getInstrument().equals(Instrument.TRUMPET)) {
-//                            gd.getChildAt(i).setBackgroundColor(Color.BLACK);
+//                            mGridLayout.getChildAt(i).setBackgroundColor(Color.BLACK);
 //                        }
 
                     }

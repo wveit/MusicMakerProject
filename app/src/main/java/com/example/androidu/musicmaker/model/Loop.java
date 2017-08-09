@@ -16,7 +16,7 @@ public class Loop {
     }
 
     private int id;
-    private String name;
+    private String name = "";
 
     public ArrayList<Tone> getmToneList() {
         return mToneList;

@@ -3,62 +3,76 @@ package com.example.androidu.musicmaker.ui;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.androidu.musicmaker.R;
-import com.example.androidu.musicmaker.model.BeatAndMeasure;
-import com.example.androidu.musicmaker.model.Instrument;
+import com.example.androidu.musicmaker.audio.SongPlayer;
+import com.example.androidu.musicmaker.audio.test.TestSongs;
 import com.example.androidu.musicmaker.model.Loop;
-import com.example.androidu.musicmaker.model.Note;
+import com.example.androidu.musicmaker.model.PlacedLoop;
 import com.example.androidu.musicmaker.model.Song;
-import com.example.androidu.musicmaker.model.Tone;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SongEditorActivity extends Activity {
 
-    private Song mSong = null;
+    private static final String EMPTY_SPINNER_STRING = "<no loops>";
+    private SongPlayer player = new SongPlayer();
 
-    // These methods are called in response to a user action
-    void onLoopPlacement(Loop loop, int startMeasure, int startBeat){
-
+    void onLoopPlacement(Loop loop, int startMeasure, int startBeat, int row){
+        PlacedLoop ploop = new PlacedLoop(loop, startMeasure, startBeat, row);
+        mSong.addPlacedLoop(ploop);
     }
+
     void onPlayRequest(){
-        mPlayPause.setImageResource(R.drawable.ic_pause_black_24px);
-        play = false;
+        mPlayPauseImage.setImageResource(R.drawable.ic_pause_black_24px);
+        mPlayPauseImageIsPlay = false;
+
+        /* add code to mPlayPauseImageIsPlay song */
+        player.setCurrentMeasure(1);
+        player.setCurrentBeat(1);
+        player.play();
+
+
     }
     void onPauseRequest(){
-        mPlayPause.setImageResource(R.drawable.ic_play_arrow_black_24px);
-        play = true;
+        mPlayPauseImage.setImageResource(R.drawable.ic_play_arrow_black_24px);
+        mPlayPauseImageIsPlay = true;
 
+        /* add code to pause song */
+        player.stop();
     }
-    void onEditLoopRequest(Loop loop){
+
+    void onEditLoopRequest(){
+        if(mCurrentlySelectedLoopId < 0)
+            return;
+
+        Loop loop = mSong.getLoop(mCurrentlySelectedLoopId);
         Intent loopEditorIntent = new Intent(this, LoopEditorActivity.class);
+        Globals.currentLoop = loop;
         startActivity(loopEditorIntent);
-
     }
+
     void onCreateLoopRequest(){
         Intent intent = new Intent(SongEditorActivity.this, LoopEditorActivity.class);
+        Loop loop = new Loop(5, mSong.getBeatsPerMeasure());
+        mSong.addLoop(loop);
+        Globals.currentLoop = loop;
         startActivity(intent);
     }
+
     void onEditSongNameRequest(){
         LayoutInflater layoutInflater = LayoutInflater.from(SongEditorActivity.this);
         final View newFileView = layoutInflater.inflate(R.layout.activity_new_filename, null);
@@ -72,8 +86,15 @@ public class SongEditorActivity extends Activity {
         newFileDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton)
             {
-                newProjectName = edFileName.getText().toString();
-                mTvProjectName.setText("Loop Name: \n" + newProjectName);
+                String newSongName = edFileName.getText().toString();
+                if(mSong == null){
+                    mSongNameTextView.setText("Loop Name: \n  -no loop set-");
+                }
+                else{
+                    mSongNameTextView.setText("Loop Name: \n" + newSongName);
+                    mSong.setName(newSongName);
+                }
+
             }
         });
 
@@ -84,253 +105,242 @@ public class SongEditorActivity extends Activity {
         });
         newFileDialog.show();
     }
-    void onExportSongRequest(){}
-    void onTempoChange(int newTempo){}
-    void onVolumeChange(int newVolume){}
 
-    // These methods control the activity
-    void setSong(Song song){
-        mSong = song;
+    void onEditNumMeasures(){
+        // Set up dialog layout
+        LayoutInflater layoutInflater = LayoutInflater.from(SongEditorActivity.this);
+        final View numberOfLoopView = layoutInflater.inflate(R.layout.activity_loop_numbers, null);
+        AlertDialog.Builder numLoopDialog = new AlertDialog.Builder(SongEditorActivity.this);
+        numLoopDialog.setTitle("Number of measures: ");
+        numLoopDialog.setView(numberOfLoopView);
+        final EditText edNumLoop = (EditText) numberOfLoopView.findViewById(R.id.ed_loopNumbers);
+
+        // Set up dialog callbacks
+        numLoopDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                String loopNumbers = edNumLoop.getText().toString();
+                int numMeasures = Integer.parseInt(loopNumbers);
+                mSong.setNumMeasures(numMeasures);
+                Log.d("TAG", "sudip:" + loopNumbers);
+                onCreate(null);
+                mNumMeasuresTextView.setText("Number of loop \n Measures: " + loopNumbers);
+
+            }
+        });
+
+        numLoopDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+
+        // Show the dialog
+        numLoopDialog.show();
     }
 
-    List<BeatAndMeasure> numberOfMeasuresList;
-    List<String> mListForSpinner = new ArrayList<>();
-    private static int mNumberOfMeasures = 5, mNumberOfBeats = 4, mZoomLevel = 1;
-    GridLayout gd;
-    LinearLayout mLnNotes;
-    TextView tv, tvSpinnerLegendSE;
-    private Spinner mSpLoops;
-    LinearLayout mLnEdit, mLnPP;
-    ImageView mImPlay, mPlayPause;
-    Button mBtnCreateNewLoop;
-    Loop mLoop;
-    TextView mTvProjectName, mTvNoOfLoopsMeasure, mTvBeatsPerMeasure;
-    String oldProjectName, newProjectName;
-    boolean play = true;
+    void onEditBeatsPerMeasure(){
+        LayoutInflater layoutInflater = LayoutInflater.from(SongEditorActivity.this);
+        final View numberOfLoopView = layoutInflater.inflate(R.layout.activity_loop_numbers, null);
+        AlertDialog.Builder numLoopDialog = new AlertDialog.Builder(SongEditorActivity.this);
+
+        numLoopDialog.setTitle("Beats per measure: ");
+        numLoopDialog.setView(numberOfLoopView);
+
+        final EditText edNumLoop = (EditText) numberOfLoopView.findViewById(R.id.ed_loopNumbers);
+
+        numLoopDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                String beatPerMeasure = edNumLoop.getText().toString();
+                int bpm = Integer.parseInt(beatPerMeasure);
+                mSong.setBeatsPerMeasure(bpm);
+                onCreate(null);
+                mBeatsPerMeasureTextView.setText("Number of loop Measures: " + beatPerMeasure);
+            }
+        });
+
+        numLoopDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+        numLoopDialog.show();
+    }
+
+    void onExportSongRequest(){}
+
+    void onTempoChange(int newTempo){}
+
+    void onVolumeChange(int newVolume){}
+
+
+
+    private Song mSong;
+    TextView mLoopColorTextView;
+    private Spinner mLoopSpinner;
+    ImageView mPlayPauseImage;
+    Button mNewLoopButton;
+    ImageView mEditLoopImage;
+    TextView mSongNameTextView, mNumMeasuresTextView, mBeatsPerMeasureTextView;
+    boolean mPlayPauseImageIsPlay = true;
+    int mCurrentlySelectedLoopId = -1;
+    RectangleDragView mRectDragView;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song_editor);
 
-        mLnNotes = (LinearLayout) findViewById(R.id.ln_lytSE);
-        mSpLoops = (Spinner) findViewById(R.id.sp_instrumentsSE);
-        mLnEdit = (LinearLayout) findViewById(R.id.ln_edit);
-        mImPlay = (ImageView) findViewById(R.id.im_playPauseSE);
-        mTvProjectName = (TextView) findViewById(R.id.tv_projectName);
-        mTvNoOfLoopsMeasure = (TextView) findViewById(R.id.tv_noLoopMeasureSE);
-        mTvBeatsPerMeasure = (TextView) findViewById(R.id.tv_beatsPerMeausreSE);
-        mLnPP = (LinearLayout) findViewById(R.id.ln_ppSE);
+        mLoopSpinner = (Spinner) findViewById(R.id.sp_instrumentsSE);
+        mSongNameTextView = (TextView) findViewById(R.id.tv_projectName);
+        mNumMeasuresTextView = (TextView) findViewById(R.id.tv_noLoopMeasureSE);
+        mBeatsPerMeasureTextView = (TextView) findViewById(R.id.tv_beatsPerMeausreSE);
+        mNewLoopButton = (Button) findViewById(R.id.btn_createNewLoop);
+        mEditLoopImage = (ImageView) findViewById(R.id.im_edit_loop);
+        mLoopColorTextView = (TextView) findViewById(R.id.tv_spinner_legendSE);
+        mPlayPauseImage = (ImageView) findViewById(R.id.im_playPauseSE);
+        mRectDragView = (RectangleDragView) findViewById(R.id.rect_drag_view);
 
-        mLnEdit.setBackgroundResource(R.drawable.border_style2);
-        mLnPP.setBackgroundResource(R.drawable.border_style2);
-        mBtnCreateNewLoop = (Button) findViewById(R.id.btn_createNewLoop);
-        tvSpinnerLegendSE = (TextView) findViewById(R.id.tv_spinner_legendSE);
-        mPlayPause = (ImageView) findViewById(R.id.im_playPauseSE);
 
-        mBtnCreateNewLoop.setOnClickListener(new View.OnClickListener() {
+        mRectDragView.setNumRows(20);
+        mRectDragView.setNumColumns(20);
+        mRectDragView.setYDragEnabled(false);
+
+//        if(Globals.currentSong == null)
+//            mSong = new Song(10, 4);
+//        else
+//            mSong = Globals.currentSong;
+
+        mSong = TestSongs.reverie();
+
+        updateSpinner();
+
+
+        mNewLoopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onCreateLoopRequest();
             }
         });
 
-        songEditorNotePlacer();
-        updateSpinner();
-
-        mTvProjectName.setOnClickListener(new View.OnClickListener() {
+        mSongNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onEditSongNameRequest();
             }
         });
 
-        mTvNoOfLoopsMeasure.setOnClickListener(new View.OnClickListener() {
+        mNumMeasuresTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LayoutInflater layoutInflater = LayoutInflater.from(SongEditorActivity.this);
-                final View numberOfLoopView = layoutInflater.inflate(R.layout.activity_loop_numbers, null);
-                AlertDialog.Builder numLoopDialog = new AlertDialog.Builder(SongEditorActivity.this);
-
-                numLoopDialog.setTitle("Number of loop measures: ");
-                numLoopDialog.setView(numberOfLoopView);
-
-                final EditText edNumLoop = (EditText) numberOfLoopView.findViewById(R.id.ed_loopNumbers);
-
-                numLoopDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton)
-                    {
-                        String loopNumbers = edNumLoop.getText().toString();
-                        mNumberOfMeasures = Integer.parseInt(loopNumbers);
-                        Log.d("TAG", "sudip:" + loopNumbers);
-                        onCreate(null);
-                        mTvNoOfLoopsMeasure.setText("Number of loop \n Measures: " + loopNumbers);
-
-                    }
-                });
-
-                numLoopDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.cancel();
-                    }
-                });
-                numLoopDialog.show();
+                onEditNumMeasures();
             }
         });
 
-        mTvBeatsPerMeasure.setOnClickListener(new View.OnClickListener() {
+        mBeatsPerMeasureTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LayoutInflater layoutInflater = LayoutInflater.from(SongEditorActivity.this);
-                final View numberOfLoopView = layoutInflater.inflate(R.layout.activity_loop_numbers, null);
-                AlertDialog.Builder numLoopDialog = new AlertDialog.Builder(SongEditorActivity.this);
-
-                numLoopDialog.setTitle("Beats per measure: ");
-                numLoopDialog.setView(numberOfLoopView);
-
-                final EditText edNumLoop = (EditText) numberOfLoopView.findViewById(R.id.ed_loopNumbers);
-
-                numLoopDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton)
-                    {
-                        String beatPerMeasure = edNumLoop.getText().toString();
-                        mNumberOfBeats = Integer.parseInt(beatPerMeasure);
-                        onCreate(null);
-                        mTvBeatsPerMeasure.setText("Number of loop Measures: " + beatPerMeasure);
-                    }
-                });
-
-                numLoopDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.cancel();
-                    }
-                });
-                numLoopDialog.show();
+                onEditBeatsPerMeasure();
             }
         });
 
-        mPlayPause.setOnClickListener(new View.OnClickListener(){
+        mPlayPauseImage.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                if(play) {
+                if(mPlayPauseImageIsPlay) {
                     onPlayRequest();
                 } else
                     onPauseRequest();
             }
         });
 
-    }
-
-    public void songEditorNotePlacer() {
-
-        int mMeasureCount = 1;
-        int mBeatCount = 1;
-        int nextMeasurePrint = 0;
-        boolean printMeasureNumber = true;
-
-        numberOfMeasuresList = new ArrayList<>();
-        ArrayList<String> notesArray = new ArrayList<>();
-
-        for(Note noteString: Note.values()){
-            notesArray.add(noteString.niceString());
-        }
-
-        for(int i = 0; i < (mNumberOfMeasures * mNumberOfBeats + mNumberOfBeats); i++){
-            if(mBeatCount <= mNumberOfBeats){
-                numberOfMeasuresList.add(new BeatAndMeasure(mBeatCount, mMeasureCount));
-                mBeatCount++;
-            } else{
-                mBeatCount = 1;
-                mMeasureCount++;
+        mEditLoopImage.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                onEditLoopRequest();
             }
-        }
-        for(int g = 0; g < 1; g++) {
-            gd = new GridLayout(this);
-            gd.setColumnCount(mNumberOfMeasures * mNumberOfBeats);
-            gd.setRowCount(notesArray.size());
-            mLnNotes.addView(gd);
-            for (int i = 0; i < (mNumberOfMeasures * mNumberOfBeats) * notesArray.size(); i++) {
-                tv = new TextView(this);
-                tv.setGravity(Gravity.CENTER);
-                tv.setHeight(80);
-                tv.setWidth(80);
-                tv.setId(i);
+        });
 
-              if (tv.getId() < (mNumberOfMeasures * mNumberOfBeats)) {
-                    if(printMeasureNumber){
-                        tv.setText(String.valueOf(numberOfMeasuresList.get(i).getMeausre()));
-                        tv.setBackgroundResource(R.drawable.measure_border);
-                        tv.setTextColor(Color.RED);
-                        printMeasureNumber = false;
-                        nextMeasurePrint = 0;
-                    } else {
-                        tv.setText(String.valueOf(numberOfMeasuresList.get(i).getBeat()));
-                        tv.setBackgroundResource(R.drawable.beat_border);
-                        nextMeasurePrint++;
-                        if(nextMeasurePrint == (mNumberOfBeats - 1)){
-                            printMeasureNumber = true;
-                        }
-                    }
-                } else {
-//                    tv.setContentDescription((numberOfMeasuresList.get(beatAndMeasureIndex).getMeausre() -1)
-//                            + "-" + numberOfMeasuresList.get(beatAndMeasureIndex).getBeat() + "-" + "1");
-//                    beatAndMeasureIndex++;
-
-                    tv.setBackgroundColor(getResources().getColor(R.color.buttonColor));
-                    tv.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                                tvOnclick(v);
-                                return true;
-                            }
-                            return false;
-                        }
-                    });
-                }
-                gd.setUseDefaultMargins(true);
-                gd.addView(tv);
+        mRectDragView.setDragListener(new RectangleDragView.RectangleDragListener(){
+            @Override
+            public void onRectangleDrag(int x1, int y1, int x2, int y2){
+                SongEditorActivity.this.rectangleDrag(x1, y1, x2, y2);
             }
-        }
-        //repopulateNotePlaced();
-    }
-    public void onEditClick(View view){
-        onEditLoopRequest(mLoop);
+        });
+
+        mLoopSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selection = (String)parent.getItemAtPosition(position);
+                if(selection.equals(EMPTY_SPINNER_STRING))
+                    return;
+
+                mCurrentlySelectedLoopId = loopIdFromName(selection);
+                int color = ColorHelper.getColor(mCurrentlySelectedLoopId);
+                mLoopColorTextView.setBackgroundColor(color);
+                mRectDragView.setDragRectColor(color);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        player.setSong(mSong);
     }
 
-    public void tvOnclick(View view){
-        if(mLoop == null)
+
+
+    public void rectangleDrag(int x1, int y1, int x2, int y2){
+        if(mCurrentlySelectedLoopId < 0)
             return;
 
-        int id = view.getId();
 
-        for(int i = 0; i < (mLoop.getNumMeasures() * mLoop.getBeatsPerMeasure()); i++) {
-            for (int j = 0; j < mListForSpinner.size(); j++) {
-                if (mSpLoops.getSelectedItem() == Instrument.values()[j]) {
-                    gd.getChildAt(id).setBackgroundColor(ColorHelper.getColor(j));
-                    id++;
-                }
-            }
-        }
+        Loop loop = mSong.getLoop(mCurrentlySelectedLoopId);
+        int row = y1;
+        int noteCode = Math.min(x1, x2);
+        int measure = noteCode / mSong.getBeatsPerMeasure() + 1;
+        int beat = noteCode % mSong.getBeatsPerMeasure() + 1;
+        int loopLength = loop.getNumMeasures() * loop.getBeatsPerMeasure();
+
+        onLoopPlacement(loop, measure, beat, row);
+        int color = ColorHelper.getColor(mCurrentlySelectedLoopId);
+        mRectDragView.addRect(x1, y1, x1 + loopLength, y2, color);
     }
 
-    public void updateSpinner(){
-        if(mSong == null){
-            mListForSpinner.add("<empty>");
-        } else {
-            for (int i = 0; i < mSong.getNumLoops(); i++) {
-                mListForSpinner.add(mSong.getLoop(i).toString());
-            }
+    private void updateSpinner(){
+
+        // Populate the mLoopSpinner with the names of loops
+        ArrayList<String> loopNameList = makeLoopNameArrayList();
+        if(loopNameList.isEmpty())
+            loopNameList.add(EMPTY_SPINNER_STRING);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, loopNameList);
+        mLoopSpinner.setAdapter(adapter);
+
+        // update mLoopColorTextView with the color of the currently selected loop
+        int currentSelectedLoopId = loopIdFromName((String)mLoopSpinner.getSelectedItem());
+        if(currentSelectedLoopId >= 0)
+            mLoopColorTextView.setBackgroundColor(ColorHelper.getColor(currentSelectedLoopId));
+    }
+
+    private int loopIdFromName(String name){
+        for(int i = 0; i < mSong.getNumLoops(); i++){
+            Loop loop = mSong.getLoop(i);
+            if(name.equals(loop.getName()))
+                return loop.getId();
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mListForSpinner);
-        mSpLoops.setAdapter(adapter);
+        return -1;
+    }
 
-
-        for(int i = 0; i < mListForSpinner.size(); i++){
-            if(mSpLoops.getSelectedItem().equals(Instrument.values()[i])){
-                tvSpinnerLegendSE.setBackgroundColor(ColorHelper.getColor(i));
-            }
-        }
-
+    private ArrayList<String> makeLoopNameArrayList(){
+        ArrayList<String> list = new ArrayList<String>();
+        for(int i = 0; i < mSong.getNumLoops(); i++)
+            list.add(mSong.getLoop(i).getName());
+        return list;
     }
 }

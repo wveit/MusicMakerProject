@@ -116,6 +116,8 @@ public class SongPlayer {
     }
 
     public void stop(){
+
+        Log.d("song player", "stop called");
         mPlayStatus = PlayStatus.STOPPED;
     }
 

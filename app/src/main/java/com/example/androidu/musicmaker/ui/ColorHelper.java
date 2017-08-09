@@ -10,6 +10,7 @@ public class ColorHelper {
     public static int getColor(int index){
         return colorArray[index % colorArray.length];
     }
+    public static int numColors(){return colorArray.length;}
 }
 
 //class waka {
